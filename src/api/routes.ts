@@ -9,6 +9,14 @@ export const API_ROUTES = {
     me: '/auth/me',
     changePassword: '/auth/change-password',
   },
+  categories: {
+    list: '/categories',
+    detail: (id: string) => `/categories/${encodeURIComponent(id)}`,
+  },
+  products: {
+    list: '/products',
+    detail: (id: string) => `/products/${encodeURIComponent(id)}`,
+  },
   orders: {
     list: '/orders',
     served: (orderId: string, itemId: string) =>

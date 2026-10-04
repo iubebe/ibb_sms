@@ -1,6 +1,7 @@
 import { LogOut, Menu, Store } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router'
+import type { UserRole } from '@/api/types'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Sheet,
@@ -10,10 +11,11 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
-import { NAV_ITEMS } from './nav-items'
+import { NAV_ITEMS, type NavItem } from './nav-items'
 
 interface AppShellProps {
   userName: string
+  role: UserRole
   onLogout: () => void
 }
 
@@ -22,17 +24,18 @@ interface AppShellProps {
  * Mobile: sticky top bar + bottom tab bar (thumb reach).
  * md and up: fixed sidebar, no bottom bar.
  */
-export function AppShell({ userName, onLogout }: AppShellProps) {
+export function AppShell({ userName, role, onLogout }: AppShellProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const { pathname } = useLocation()
-  const title = NAV_ITEMS.find((item) => isActive(item.to, pathname))?.label
+  const navItems = NAV_ITEMS.filter((item) => !item.roles || item.roles.includes(role))
+  const title = navItems.find((item) => isActive(item.to, pathname))?.label
 
   return (
     <div className="min-h-svh md:grid md:grid-cols-[14rem_1fr]">
       <aside className="hidden border-r bg-sidebar text-sidebar-foreground md:block">
         <div className="sticky top-0 flex h-svh flex-col gap-4 p-4">
           <Brand />
-          <SideNav />
+          <SideNav items={navItems} />
           <UserMenu userName={userName} onLogout={onLogout} className="mt-auto" />
         </div>
       </aside>
@@ -58,7 +61,7 @@ export function AppShell({ userName, onLogout }: AppShellProps) {
                   <Brand />
                 </SheetTitle>
               </SheetHeader>
-              <SideNav className="px-4" onNavigate={() => setMenuOpen(false)} />
+              <SideNav items={navItems} className="px-4" onNavigate={() => setMenuOpen(false)} />
               <UserMenu
                 userName={userName}
                 onLogout={onLogout}
@@ -75,16 +78,16 @@ export function AppShell({ userName, onLogout }: AppShellProps) {
 
         <nav
           aria-label="Điều hướng chính"
-          className="fixed inset-x-0 bottom-0 z-10 grid grid-cols-4 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+          className="fixed inset-x-0 bottom-0 z-10 flex border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
         >
-          {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+          {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               end={to === '/'}
               className={({ isActive }) =>
                 cn(
-                  'flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs transition-colors active:bg-muted',
+                  'flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs transition-colors active:bg-muted',
                   isActive ? 'font-medium text-foreground' : 'text-muted-foreground',
                 )
               }
@@ -103,10 +106,18 @@ function isActive(to: string, pathname: string) {
   return to === '/' ? pathname === '/' : pathname === to || pathname.startsWith(`${to}/`)
 }
 
-function SideNav({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
+function SideNav({
+  items,
+  className,
+  onNavigate,
+}: {
+  items: NavItem[]
+  className?: string
+  onNavigate?: () => void
+}) {
   return (
     <nav className={cn('flex flex-col gap-1', className)}>
-      {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+      {items.map(({ to, label, icon: Icon }) => (
         <NavLink
           key={to}
           to={to}

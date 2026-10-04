@@ -53,3 +53,39 @@ export interface ServedItem {
   quantity: number
   servedQuantity: number
 }
+
+/** `ibb_shop_backend/src/modules/categories` (admin only). */
+export interface Category {
+  id: string
+  name: string
+  /** Products in the category, active or not. */
+  productCount: number
+  createdAt: string
+}
+
+export interface CategoryInput {
+  name: string
+}
+
+/** `ibb_shop_backend/src/modules/products` (admin only). */
+export interface Product {
+  id: string
+  categoryId: string | null
+  name: string
+  /** VND, whole number */
+  price: number
+  imageUrl: string | null
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ProductInput {
+  name: string
+  price: number
+  /** `null` = uncategorized */
+  categoryId: string | null
+  /** `null` = no image */
+  imageUrl: string | null
+  isActive: boolean
+}

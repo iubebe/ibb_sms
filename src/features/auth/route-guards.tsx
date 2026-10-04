@@ -1,8 +1,10 @@
 import { Navigate, Outlet, useLocation } from 'react-router'
 import { ApiError } from '@/api/client'
 import { useLogout, useMe } from '@/api/hooks'
+import type { UserRole } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ForbiddenPage } from '@/features/errors/forbidden-page'
 import { AppShell } from '@/features/shell/app-shell'
 import { useRealtimeConnection } from '@/ws/use-socket'
 
@@ -58,7 +60,17 @@ export function ProtectedRoute() {
   }
   if (gate.user.mustChangePassword) return <Navigate to="/change-password" replace />
 
-  return <AppShell userName={gate.user.name} onLogout={() => logout()} />
+  return <AppShell userName={gate.user.name} role={gate.user.role} onLogout={() => logout()} />
+}
+
+/**
+ * Layout route inside `ProtectedRoute`: only these roles get the page, others see
+ * "forbidden" within the shell. This is UX only; the backend enforces access.
+ */
+export function RoleRoute({ roles }: { roles: UserRole[] }) {
+  const { data: user } = useMe()
+  if (!user || !roles.includes(user.role)) return <ForbiddenPage />
+  return <Outlet />
 }
 
 /** Only for logged-out visitors (login); logged-in users go back where they came from. */
