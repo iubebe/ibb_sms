@@ -6,6 +6,7 @@ export const queryKeys = {
   auth: {
     me: ['auth', 'me'] as const,
   },
+  dashboard: ['dashboard'] as const,
   categories: {
     all: ['categories'] as const,
   },

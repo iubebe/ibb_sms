@@ -89,3 +89,42 @@ export interface ProductInput {
   imageUrl: string | null
   isActive: boolean
 }
+
+/** `ibb_shop_backend/src/modules/dashboard` (all roles; `sales` is admin only). */
+export interface DashboardQueue {
+  pendingConfirmation: number
+  confirmed: number
+  /** Units still to deliver across confirmed orders. */
+  unservedItems: number
+}
+
+export interface DashboardRecentOrder {
+  id: string
+  status: OrderStatus
+  tableName: string | null
+  total: number
+  itemCount: number
+  createdAt: string
+}
+
+export interface DashboardTopProduct {
+  productId: string
+  name: string
+  quantity: number
+  revenue: number
+}
+
+export interface DashboardSales {
+  revenue: number
+  paidOrders: number
+  topProducts: DashboardTopProduct[]
+}
+
+export interface Dashboard {
+  /** Start of the shop-local day the figures cover (ISO). */
+  since: string
+  queue: DashboardQueue
+  recentOrders: DashboardRecentOrder[]
+  /** `null` unless the user is an admin. */
+  sales: DashboardSales | null
+}

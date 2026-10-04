@@ -9,6 +9,7 @@ export const API_ROUTES = {
     me: '/auth/me',
     changePassword: '/auth/change-password',
   },
+  dashboard: '/dashboard',
   categories: {
     list: '/categories',
     detail: (id: string) => `/categories/${encodeURIComponent(id)}`,

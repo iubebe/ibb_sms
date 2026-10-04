@@ -1,5 +1,6 @@
 export * from './use-auth'
 export * from './use-categories'
+export * from './use-dashboard'
 export * from './use-health'
 export * from './use-orders'
 export * from './use-products'
