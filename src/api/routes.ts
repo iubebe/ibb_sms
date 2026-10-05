@@ -18,6 +18,21 @@ export const API_ROUTES = {
     list: '/products',
     detail: (id: string) => `/products/${encodeURIComponent(id)}`,
   },
+  users: {
+    list: '/users',
+    detail: (id: string) => `/users/${encodeURIComponent(id)}`,
+    resetPassword: (id: string) => `/users/${encodeURIComponent(id)}/reset-password`,
+  },
+  attendance: {
+    me: '/attendance/me',
+    checkIn: '/attendance/check-in',
+    checkOut: '/attendance/check-out',
+    list: '/attendance',
+    report: '/attendance/report',
+    exportReport: '/attendance/report/export',
+    detail: (id: string) => `/attendance/${encodeURIComponent(id)}`,
+    photo: (id: string, kind: string) => `/attendance/${encodeURIComponent(id)}/photo/${kind}`,
+  },
   orders: {
     list: '/orders',
     served: (orderId: string, itemId: string) =>

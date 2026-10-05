@@ -128,3 +128,86 @@ export interface Dashboard {
   /** `null` unless the user is an admin. */
   sales: DashboardSales | null
 }
+
+/** `ibb_shop_backend/src/modules/users` (admin only). */
+export interface ManagedUser {
+  id: string
+  name: string
+  email: string
+  role: UserRole
+  isActive: boolean
+  /** Still on a temporary password. */
+  mustChangePassword: boolean
+  createdAt: string
+}
+
+export interface CreateUserInput {
+  name: string
+  email: string
+  role: UserRole
+  /** Temporary password, 10-128 characters; the user changes it at first login. */
+  password: string
+}
+
+export type UpdateUserInput = Partial<Pick<ManagedUser, 'name' | 'email' | 'role' | 'isActive'>>
+
+export type FaceCheckStatus = 'pending' | 'passed' | 'failed'
+/** `incomplete` = open longer than the max shift, i.e. a forgotten check-out. */
+export type AttendanceStatus = 'open' | 'completed' | 'incomplete'
+export type AttendancePhotoKind = 'check-in' | 'check-out'
+
+/** `ibb_shop_backend/src/modules/attendance`. */
+export interface AttendanceRecord {
+  id: string
+  userId: string
+  /** Only filled on admin lists. */
+  userName: string | null
+  checkInAt: string
+  checkOutAt: string | null
+  /** Worked minutes; `null` until the session is completed. */
+  minutes: number | null
+  status: AttendanceStatus
+  checkInFaceStatus: FaceCheckStatus
+  checkOutFaceStatus: FaceCheckStatus
+  hasCheckOutPhoto: boolean
+  /** An admin corrected the times. */
+  adjusted: boolean
+}
+
+export interface MonthTotals {
+  /** Calendar days with at least one session. */
+  days: number
+  sessions: number
+  /** Completed sessions only. */
+  minutes: number
+  /** Forgotten check-outs. */
+  incomplete: number
+}
+
+export interface MyAttendance {
+  timezone: string
+  state: 'idle' | 'checked_in'
+  open: { id: string; checkInAt: string } | null
+  today: { minutes: number; sessions: number }
+  month: MonthTotals & { month: string }
+  recent: AttendanceRecord[]
+}
+
+export interface AttendanceSummaryRow extends MonthTotals {
+  userId: string
+  name: string
+  email: string
+  role: UserRole
+  isActive: boolean
+}
+
+export interface AttendanceReport {
+  month: string
+  rows: AttendanceSummaryRow[]
+}
+
+export interface AdjustAttendanceInput {
+  /** ISO timestamps */
+  checkInAt?: string
+  checkOutAt?: string
+}

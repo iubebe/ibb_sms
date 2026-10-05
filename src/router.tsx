@@ -7,6 +7,7 @@ import {
   ProtectedRoute,
   RoleRoute,
 } from '@/features/auth/route-guards'
+import { CheckInPage } from '@/features/check-in/check-in-page'
 import { DashboardPage } from '@/features/dashboard/dashboard-page'
 import { PageNotFound } from '@/features/errors/page-not-found'
 import { OrdersPage } from '@/features/orders/orders-page'
@@ -29,9 +30,15 @@ export const router = createBrowserRouter([
       { path: 'orders', element: <OrdersPage /> },
       {
         element: <RoleRoute roles={['admin']} />,
-        children: [{ path: 'products', element: <ProductsPage /> }],
+        children: [
+          { path: 'products', element: <ProductsPage /> },
+          { path: 'staff', element: <StaffPage /> },
+        ],
       },
-      { path: 'staff', element: <StaffPage /> },
+      {
+        element: <RoleRoute roles={['staff', 'cashier']} />,
+        children: [{ path: 'check-in', element: <CheckInPage /> }],
+      },
     ],
   },
   { path: '*', element: <PageNotFound /> },

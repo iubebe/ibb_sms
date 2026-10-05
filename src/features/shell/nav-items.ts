@@ -2,6 +2,7 @@ import type { UserRole } from '@/api/types'
 import {
   ClipboardList,
   LayoutDashboard,
+  ScanFace,
   Package,
   Users,
   type LucideIcon,
@@ -20,5 +21,6 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Tổng quan', icon: LayoutDashboard },
   { to: '/orders', label: 'Đơn hàng', icon: ClipboardList },
   { to: '/products', label: 'Sản phẩm', icon: Package, roles: ['admin'] },
-  { to: '/staff', label: 'Nhân sự', icon: Users },
+  { to: '/check-in', label: 'Chấm công', icon: ScanFace, roles: ['staff', 'cashier'] },
+  { to: '/staff', label: 'Nhân sự', icon: Users, roles: ['admin'] },
 ]
