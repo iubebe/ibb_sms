@@ -35,6 +35,9 @@ export const API_ROUTES = {
   },
   orders: {
     list: '/orders',
+    confirm: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/confirm`,
+    cancel: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/cancel`,
+    pay: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/pay`,
     served: (orderId: string, itemId: string) =>
       `/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(itemId)}/served`,
   },

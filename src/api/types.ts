@@ -48,6 +48,17 @@ export interface StaffOrder {
   items: StaffOrderItem[]
 }
 
+export type PaymentMethod = 'cash' | 'qr_manual'
+
+/** Result of confirm / cancel / pay on an order. */
+export interface OrderTransition {
+  id: string
+  status: OrderStatus
+  confirmedAt: string | null
+  paidAt: string | null
+  paymentMethod: PaymentMethod | null
+}
+
 export interface ServedItem {
   id: string
   quantity: number
