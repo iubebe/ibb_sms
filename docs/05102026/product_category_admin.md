@@ -16,7 +16,7 @@ Main doc: `ibb_shop_backend/docs/05102026/product_category_crud.md` (API, valida
 
 ## Decisions
 - Images are a URL field; real upload needs a backend storage decision.
-- Local-to-feature components only (`confirm-delete-dialog`, `*-form-sheet`); `formatPrice` was copied from the guest app into `src/lib/format-price.ts`. If you want the confirm dialog or money formatter shared across apps/features, propose that first.
+- Local-to-feature components only (`*-form-sheet`); `formatPrice` was copied from the guest app into `src/lib/format-price.ts`. `confirm-delete-dialog` was later moved to `src/components/` (06/10/2026), shared by products, staff and tables.
 - Deleting a product used in orders is blocked by the backend (409); the dialog explains to switch it off instead.
 
 ## Not verified

@@ -18,6 +18,12 @@ export const API_ROUTES = {
     list: '/products',
     detail: (id: string) => `/products/${encodeURIComponent(id)}`,
   },
+  tables: {
+    list: '/tables',
+    detail: (id: string) => `/tables/${encodeURIComponent(id)}`,
+    regenerateQr: (id: string) => `/tables/${encodeURIComponent(id)}/regenerate-qr`,
+    qrPdf: '/tables/qr-pdf',
+  },
   users: {
     list: '/users',
     detail: (id: string) => `/users/${encodeURIComponent(id)}`,
