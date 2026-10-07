@@ -17,6 +17,13 @@ export const API_ROUTES = {
   products: {
     list: '/products',
     detail: (id: string) => `/products/${encodeURIComponent(id)}`,
+    image: (id: string) => `/products/${encodeURIComponent(id)}/image`,
+  },
+  tables: {
+    list: '/tables',
+    detail: (id: string) => `/tables/${encodeURIComponent(id)}`,
+    regenerateQr: (id: string) => `/tables/${encodeURIComponent(id)}/regenerate-qr`,
+    qrPdf: '/tables/qr-pdf',
   },
   users: {
     list: '/users',

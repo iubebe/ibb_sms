@@ -5,7 +5,7 @@ import type { Category } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CategoryFormSheet } from './category-form-sheet'
-import { ConfirmDeleteDialog } from './confirm-delete-dialog'
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog'
 
 type FormTarget = { category: Category | null } | null
 

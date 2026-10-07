@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
 import { formatPrice } from '@/lib/format-price'
 import { cn } from '@/lib/utils'
-import { ConfirmDeleteDialog } from './confirm-delete-dialog'
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog'
 import { ProductFormSheet } from './product-form-sheet'
 
 /** Filter value for products without a category. */
