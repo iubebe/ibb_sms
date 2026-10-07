@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.0.0...ibb_sms-v1.1.0) (2026-10-07)
+
+
+### Features
+
+* table management ([1043231](https://github.com/iubebe/ibb_sms/commit/104323151fda0d0f448bc8c1bc940c2fdafb20a2))
+
 ## 1.0.0 (2026-10-05)
 
 
