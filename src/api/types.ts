@@ -78,6 +78,24 @@ export interface CategoryInput {
   name: string
 }
 
+/** `ibb_shop_backend/src/modules/tables` (admin only). */
+export interface DiningTable {
+  id: string
+  name: string
+  /** Printed in the table QR as `{guest app}/t/{qrToken}`. */
+  qrToken: string
+  createdAt: string
+}
+
+export interface TableInput {
+  name: string
+}
+
+export interface TableQrPdfOptions {
+  columns: number
+  rows: number
+}
+
 /** `ibb_shop_backend/src/modules/products` (admin only). */
 export interface Product {
   id: string

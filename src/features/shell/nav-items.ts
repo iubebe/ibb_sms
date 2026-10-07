@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   ScanFace,
   Package,
+  QrCode,
   Users,
   type LucideIcon,
 } from 'lucide-react'
@@ -22,5 +23,6 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/orders', label: 'Đơn hàng', icon: ClipboardList },
   { to: '/products', label: 'Sản phẩm', icon: Package, roles: ['admin'] },
   { to: '/check-in', label: 'Chấm công', icon: ScanFace, roles: ['staff', 'cashier'] },
+  { to: '/tables', label: 'Bàn', icon: QrCode, roles: ['admin'] },
   { to: '/staff', label: 'Nhân sự', icon: Users, roles: ['admin'] },
 ]

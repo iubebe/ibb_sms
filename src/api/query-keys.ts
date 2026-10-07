@@ -13,6 +13,9 @@ export const queryKeys = {
   products: {
     all: ['products'] as const,
   },
+  tables: {
+    all: ['tables'] as const,
+  },
   users: {
     all: ['users'] as const,
   },

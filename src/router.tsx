@@ -13,6 +13,7 @@ import { PageNotFound } from '@/features/errors/page-not-found'
 import { OrdersPage } from '@/features/orders/orders-page'
 import { ProductsPage } from '@/features/products/products-page'
 import { StaffPage } from '@/features/staff/staff-page'
+import { TablesPage } from '@/features/tables/tables-page'
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'products', element: <ProductsPage /> },
           { path: 'staff', element: <StaffPage /> },
+          { path: 'tables', element: <TablesPage /> },
         ],
       },
       {
