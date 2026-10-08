@@ -1,4 +1,6 @@
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
 import { useMe, useOrders } from '@/api/hooks'
 import type { OrderStatus, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
@@ -13,10 +15,12 @@ import { OrderCard } from './order-card'
  * Cashiers only see confirmed orders (nothing to do on the others).
  */
 export function OrdersPage() {
+  const navigate = useNavigate()
   const { data: me } = useMe()
   const role = me?.role
   const canManage = role === 'admin' || role === 'staff'
   const canCheckout = role === 'admin' || role === 'cashier'
+  const canCreateOrder = role === 'admin' || role === 'staff'
 
   const [cancelTarget, setCancelTarget] = useState<StaffOrder | null>(null)
   const [checkoutTarget, setCheckoutTarget] = useState<StaffOrder | null>(null)
@@ -28,7 +32,15 @@ export function OrdersPage() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-xl font-semibold">Đơn hàng</h2>
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-xl font-semibold">Đơn hàng</h2>
+        {canCreateOrder && (
+          <Button className="min-h-11" onClick={() => navigate('/orders/create')}>
+            <Plus />
+            Tạo đơn
+          </Button>
+        )}
+      </div>
 
       <Tabs defaultValue={canManage ? 'pending_confirmation' : 'confirmed'}>
         <TabsList className="w-full md:w-fit">
