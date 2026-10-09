@@ -1,0 +1,67 @@
+name: staging
+
+# Every push to develop publishes a staging image and asks the release repo for
+# a staging version PR (devops merge it to deploy staging).
+#
+# Vite bakes the API URLs into the bundle, so this image only works on staging
+# (never deploy a dev-* tag to prod). Set these repository variables
+# (Settings > Secrets and variables > Actions > Variables):
+#   STAGING_VITE_API_URL  e.g. https://api.staging.iubebe.vn/api
+#   STAGING_VITE_WS_URL   e.g. https://api.staging.iubebe.vn
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+  packages: write
+
+# Only the newest develop commit matters for staging.
+concurrency:
+  group: staging
+  cancel-in-progress: true
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require staging API URLs
+        env:
+          VITE_API_URL: ${{ vars.STAGING_VITE_API_URL }}
+          VITE_WS_URL: ${{ vars.STAGING_VITE_WS_URL }}
+        run: |
+          test -n "$VITE_API_URL" || { echo "::error::repo variable STAGING_VITE_API_URL is not set"; exit 1; }
+          test -n "$VITE_WS_URL" || { echo "::error::repo variable STAGING_VITE_WS_URL is not set"; exit 1; }
+      - id: tag
+        run: echo "tag=dev-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: |
+            VITE_API_URL=${{ vars.STAGING_VITE_API_URL }}
+            VITE_WS_URL=${{ vars.STAGING_VITE_WS_URL }}
+          tags: ghcr.io/${{ github.repository }}:${{ steps.tag.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  request-staging-deploy:
+    needs: image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open the staging version PR
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+          VERSION: ${{ needs.image.outputs.tag }}
+        run: |
+          gh workflow run bump-version.yml -R iubebe/ibb_shop_release \
+            -f service=sms -f version="$VERSION" -f environment=staging

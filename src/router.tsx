@@ -10,6 +10,7 @@ import {
 import { CheckInPage } from '@/features/check-in/check-in-page'
 import { DashboardPage } from '@/features/dashboard/dashboard-page'
 import { PageNotFound } from '@/features/errors/page-not-found'
+import { CreateOrderPage } from '@/features/orders/create-order-page'
 import { OrdersPage } from '@/features/orders/orders-page'
 import { ProductsPage } from '@/features/products/products-page'
 import { StaffPage } from '@/features/staff/staff-page'
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'orders', element: <OrdersPage /> },
+      {
+        element: <RoleRoute roles={['admin', 'staff']} />,
+        children: [{ path: 'orders/create', element: <CreateOrderPage /> }],
+      },
       {
         element: <RoleRoute roles={['admin']} />,
         children: [
