@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.1.0...ibb_sms-v1.2.0) (2026-10-09)
+
+
+### Features
+
+* order by table control ([c9ba23c](https://github.com/iubebe/ibb_sms/commit/c9ba23c18306cee6d932945748a178c8181bc80e))
+
 ## [1.1.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.0.0...ibb_sms-v1.1.0) (2026-10-07)
 
 
