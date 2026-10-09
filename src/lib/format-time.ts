@@ -53,3 +53,42 @@ export function toLocalInput(iso: string) {
 export function fromLocalInput(value: string) {
   return new Date(value).toISOString()
 }
+
+/** Format timestamp as relative time ago (e.g., "5 minutes ago", "2 hours ago", "3 days ago"). */
+export function formatTimeAgo(date: Date | string): string {
+  const now = new Date()
+  const past = typeof date === 'string' ? new Date(date) : date
+  const diffMs = now.getTime() - past.getTime()
+
+  if (diffMs < 0) {
+    return 'in the future'
+  }
+
+  // Minutes
+  const minutes = Math.floor(diffMs / 60000)
+  if (minutes < 60) {
+    return minutes === 0 ? 'vừa xong' : `${minutes} phút trước`
+  }
+
+  // Hours
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) {
+    return `${hours} giờ trước`
+  }
+
+  // Days
+  const days = Math.floor(hours / 24)
+  if (days < 30) {
+    return `${days} ngày trước`
+  }
+
+  // Months
+  const months = Math.floor(days / 30)
+  if (months < 12) {
+    return `${months} tháng trước`
+  }
+
+  // Years
+  const years = Math.floor(months / 12)
+  return `${years} năm trước`
+}

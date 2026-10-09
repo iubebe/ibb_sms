@@ -4,7 +4,7 @@ import type { StaffOrder, StaffOrderItem } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatPrice } from '@/lib/format-price'
-import { formatTime, minutesSince } from '@/lib/format-time'
+import { formatTime, formatTimeAgo } from '@/lib/format-time'
 import { ORDER_STATUS_LABEL } from '@/features/dashboard/order-status'
 
 interface OrderCardProps {
@@ -29,7 +29,7 @@ export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout 
         <div className="min-w-0">
           <p className="truncate text-lg font-semibold">{order.tableName ?? 'Không có bàn'}</p>
           <p className="text-xs text-muted-foreground">
-            {formatTime(order.createdAt)} · {minutesSince(order.createdAt)} phút trước
+            {formatTime(order.createdAt)} · {formatTimeAgo(order.createdAt)}
           </p>
         </div>
         <Badge variant={isPending ? 'default' : 'secondary'}>{ORDER_STATUS_LABEL[order.status]}</Badge>

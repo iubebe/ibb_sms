@@ -48,6 +48,17 @@ export interface StaffOrder {
   items: StaffOrderItem[]
 }
 
+export interface CreateOrderItemInput {
+  productId: string
+  quantity: number
+  notes?: string
+}
+
+export interface CreateOrderStaffInput {
+  tableId: string
+  items: CreateOrderItemInput[]
+}
+
 export type PaymentMethod = 'cash' | 'qr_manual'
 
 /** Result of confirm / cancel / pay on an order. */
