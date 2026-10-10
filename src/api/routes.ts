@@ -48,5 +48,6 @@ export const API_ROUTES = {
     pay: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/pay`,
     served: (orderId: string, itemId: string) =>
       `/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(itemId)}/served`,
+    paymentQrCodes: '/orders/payment-qr-codes',
   },
 } as const
