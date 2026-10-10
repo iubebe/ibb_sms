@@ -1,6 +1,6 @@
 import { Banknote, Loader2, QrCode, TriangleAlert } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { usePayOrder } from '@/api/hooks'
+import { usePayOrder, usePaymentQrCodes } from '@/api/hooks'
 import type { PaymentMethod, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,7 +16,7 @@ interface CheckoutSheetProps {
   onClose: () => void
 }
 
-/** Cashier checkout: pick cash (with change) or a manual QR transfer, then mark the order paid. */
+/** Staff/Cashier checkout: pick cash (with change) or a manual QR transfer, then mark the order paid. */
 export function CheckoutSheet({ order, onClose }: CheckoutSheetProps) {
   return (
     <Sheet open={order !== null} onOpenChange={(next) => !next && onClose()}>
@@ -30,25 +30,37 @@ export function CheckoutSheet({ order, onClose }: CheckoutSheetProps) {
 
 function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void }) {
   const pay = usePayOrder()
+  const { data: qrCodes } = usePaymentQrCodes()
   const [method, setMethod] = useState<PaymentMethod>('cash')
   const [received, setReceived] = useState('')
+  const [isPending, setIsPending] = useState(false)
 
   const receivedAmount = Number(received) || 0
   const change = receivedAmount - order.total
   const unserved = order.items.reduce((sum, i) => sum + i.quantity - i.servedQuantity, 0)
   // Offer the bills that cover the total, so the cashier taps instead of typing.
   const quickAmounts = [order.total, ...BILLS.filter((b) => b > order.total).slice(0, 3)]
-  const valid = method === 'qr_manual' || receivedAmount >= order.total
+  const isCash = method === 'cash'
+  const validCash = receivedAmount >= order.total
+  const valid = !isCash || validCash
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    pay.mutate({ orderId: order.id, paymentMethod: method }, { onSuccess: onDone })
+    if (isCash && validCash) {
+      // Cash: auto-verify immediately
+      setIsPending(true)
+      pay.mutate({ orderId: order.id, paymentMethod: 'cash' }, { onSuccess: onDone })
+    } else if (!isCash) {
+      // QR: mark as paid and close (customer already paid)
+      setIsPending(true)
+      pay.mutate({ orderId: order.id, paymentMethod: 'qr_manual' }, { onSuccess: onDone })
+    }
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
+      className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
     >
       <SheetHeader className="px-0">
         <SheetTitle>Thanh toán · {order.tableName ?? 'Không có bàn'}</SheetTitle>
@@ -85,7 +97,7 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
         </Button>
       </div>
 
-      {method === 'cash' ? (
+      {isCash ? (
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="received">Khách đưa (₫)</Label>
@@ -123,9 +135,27 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
           )}
         </div>
       ) : (
-        <p className="rounded-lg border p-3 text-sm">
-          Kiểm tra tiền đã về tài khoản đủ <strong>{formatPrice(order.total)}</strong> rồi mới xác nhận.
-        </p>
+        <div className="flex flex-col gap-3">
+          {qrCodes && qrCodes.length > 0 ? (
+            <>
+              <div className="flex flex-col gap-2">
+                {qrCodes.map((qr) => (
+                  <div key={qr.id} className="flex flex-col items-center gap-2 rounded-lg border p-3">
+                    <img src={qr.imagePath} alt={qr.label} className="h-48 w-48 object-contain" />
+                    <p className="text-sm font-medium">{qr.label}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-sm text-muted-foreground">
+                Thanh toán <strong>{formatPrice(order.total)}</strong> rồi nhấn xác nhận.
+              </p>
+            </>
+          ) : (
+            <p className="rounded-lg border p-3 text-center text-sm text-muted-foreground">
+              Chưa có mã QR thanh toán. Liên hệ quản lý để thiết lập.
+            </p>
+          )}
+        </div>
       )}
 
       {pay.isError && (
@@ -134,9 +164,9 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
         </p>
       )}
 
-      <Button type="submit" className="min-h-12 w-full text-base" disabled={!valid || pay.isPending}>
-        {pay.isPending && <Loader2 className="animate-spin" />}
-        Xác nhận đã thanh toán
+      <Button type="submit" className="min-h-12 w-full text-base" disabled={!valid || pay.isPending || isPending}>
+        {(pay.isPending || isPending) && <Loader2 className="animate-spin" />}
+        {isCash ? 'Xác nhận thanh toán tiền mặt' : 'Khách đã thanh toán'}
       </Button>
     </form>
   )

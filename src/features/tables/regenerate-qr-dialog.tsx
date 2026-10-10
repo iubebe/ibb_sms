@@ -9,6 +9,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface RegenerateQrDialogProps {
   open: boolean
@@ -38,7 +40,7 @@ export function RegenerateQrDialog({ open, tableName, pending, error, onConfirm,
           <AlertDialogCancel className="min-h-11" disabled={pending}>
             Hủy
           </AlertDialogCancel>
-          <AlertDialogAction variant="destructive" className="min-h-11" disabled={pending} onClick={onConfirm}>
+          <AlertDialogAction className={cn(buttonVariants({ variant: 'destructive' }), 'min-h-11')} disabled={pending} onClick={onConfirm}>
             {pending && <Loader2 className="animate-spin" />}
             Tạo lại
           </AlertDialogAction>

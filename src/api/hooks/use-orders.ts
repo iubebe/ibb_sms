@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { CreateOrderStaffInput, OrderStatus, OrderTransition, PaymentMethod, ServedItem, StaffOrder } from '@/api/types'
+import type { CreateOrderStaffInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
 
 export async function getOrders(status?: OrderStatus) {
   const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.list, { params: { status } })
@@ -89,5 +89,12 @@ export function useCreateOrder() {
   return useMutation({
     mutationFn: createOrderForStaff,
     onSettled: refresh,
+  })
+}
+
+export function usePaymentQrCodes() {
+  return useQuery({
+    queryKey: queryKeys.orders.paymentQrCodes,
+    queryFn: () => apiClient.get<PaymentQrCode[]>(API_ROUTES.orders.paymentQrCodes).then(r => r.data),
   })
 }

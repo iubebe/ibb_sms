@@ -16,6 +16,9 @@ export const queryKeys = {
   tables: {
     all: ['tables'] as const,
   },
+  paymentQrCodes: {
+    all: ['paymentQrCodes'] as const,
+  },
   users: {
     all: ['users'] as const,
   },
@@ -28,5 +31,14 @@ export const queryKeys = {
   orders: {
     all: ['orders'] as const,
     list: (status?: OrderStatus) => ['orders', 'list', status ?? 'all'] as const,
+    paymentQrCodes: ['orders', 'paymentQrCodes'] as const,
+  },
+  staffSchedules: {
+    all: ['staffSchedules'] as const,
+    byWeek: (weekStartDate: string) => ['staffSchedules', 'byWeek', weekStartDate] as const,
+    registrationsByWeek: (weekStartDate: string) => ['staffSchedules', 'registrations', weekStartDate] as const,
+    myRegistrations: (weekStartDate: string) => ['staffSchedules', 'myRegistrations', weekStartDate] as const,
+    proposalsByWeek: (weekStartDate: string) => ['staffSchedules', 'proposals', weekStartDate] as const,
+    myProposals: (weekStartDate: string) => ['staffSchedules', 'myProposals', weekStartDate] as const,
   },
 } as const

@@ -61,6 +61,17 @@ export interface CreateOrderStaffInput {
 
 export type PaymentMethod = 'cash' | 'qr_manual'
 
+export interface PaymentQrCode {
+  id: string
+  branchId: string
+  label: string
+  /** Public image URL (S3). Named `imagePath` for the existing checkout contract. */
+  imagePath: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 /** Result of confirm / cancel / pay on an order. */
 export interface OrderTransition {
   id: string
@@ -250,4 +261,56 @@ export interface AdjustAttendanceInput {
   /** ISO timestamps */
   checkInAt?: string
   checkOutAt?: string
+}
+
+export interface StaffSchedule {
+  id: string
+  branchId: string
+  assignedToUserId: string | null
+  weekStartDate: string
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  shiftType: string | null
+  position: string | null
+  /** scheduled | proposed | rejected | cancelled | no-show */
+  status: string
+  proposedByUserId: string | null
+  reviewedByUserId: string | null
+  reviewedAt: string | null
+  reviewNotes: string | null
+  /** Set on the admin proposal list only. */
+  proposedByUser?: { id: string; name: string } | null
+}
+
+export interface ShiftInput {
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  shiftType?: string
+  position?: string
+}
+
+export interface CreateStaffScheduleInput {
+  weekStartDate: string
+  shifts: ShiftInput[]
+}
+
+export interface UpdateStaffScheduleInput {
+  startTime?: string
+  endTime?: string
+  shiftType?: string
+  position?: string
+  status?: string
+  assignedToUserId?: string | null
+}
+
+export interface StaffShiftRegistration {
+  id: string
+  scheduleId: string
+  staffUserId: string
+  status: string
+  adminNotes: string | null
+  reviewedAt: string | null
+  reviewedByUserId: string | null
 }
