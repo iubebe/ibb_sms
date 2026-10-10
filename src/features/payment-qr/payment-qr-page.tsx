@@ -1,4 +1,4 @@
-import { Loader2, Plus, QrCode } from 'lucide-react'
+import { Loader2, QrCode } from 'lucide-react'
 import { useState } from 'react'
 import { useDeletePaymentQrCode, usePaymentQrCodeList } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentQrCode } from '@/api/types'

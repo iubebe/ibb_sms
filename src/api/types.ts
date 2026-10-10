@@ -279,6 +279,8 @@ export interface StaffSchedule {
   reviewedByUserId: string | null
   reviewedAt: string | null
   reviewNotes: string | null
+  /** Set on list/get endpoints. */
+  assignedToUser?: { id: string; name: string } | null
   /** Set on the admin proposal list only. */
   proposedByUser?: { id: string; name: string } | null
 }

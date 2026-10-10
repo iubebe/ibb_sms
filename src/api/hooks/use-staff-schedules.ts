@@ -217,3 +217,20 @@ export function useCancelProposal() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.staffSchedules.all }),
   })
 }
+
+export function useUpdateSchedule() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (v: { id: string; input: UpdateStaffScheduleInput }) =>
+      updateSchedule(v.id, v.input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.staffSchedules.all }),
+  })
+}
+
+export function useCancelSchedule() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => cancelSchedule(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.staffSchedules.all }),
+  })
+}
