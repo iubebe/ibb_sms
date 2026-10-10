@@ -1,10 +1,11 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
-import { useRegistrationsByWeek, useSchedulesByWeek } from '@/api/hooks/use-staff-schedules'
+import { useProposalsByWeek, useRegistrationsByWeek, useSchedulesByWeek } from '@/api/hooks/use-staff-schedules'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getWeekStartDate, addWeeks } from '@/lib/date-utils'
+import { ProposalsList } from './proposals-list'
 import { RegistrationsList } from './registrations-list'
 import { SchedulesList } from './schedules-list'
 
@@ -13,6 +14,7 @@ export function AdminSchedulesPage() {
   const [weekStartDate, setWeekStartDate] = useState(getWeekStartDate(today))
   const schedules = useSchedulesByWeek(weekStartDate)
   const registrations = useRegistrationsByWeek(weekStartDate)
+  const proposals = useProposalsByWeek(weekStartDate)
 
   const handlePrevWeek = () => {
     setWeekStartDate(addWeeks(weekStartDate, -1))
@@ -22,8 +24,11 @@ export function AdminSchedulesPage() {
     setWeekStartDate(addWeeks(weekStartDate, 1))
   }
 
-  const scheduleList = schedules.data || []
+  // Proposals are reviewed in their own tab; keep them out of the shift list.
+  const scheduleList = (schedules.data || []).filter((s) => s.status !== 'proposed' && s.status !== 'rejected')
   const registrationList = registrations.data || []
+  const proposalList = proposals.data || []
+  const pendingProposals = proposalList.filter((p) => p.status === 'proposed').length
 
   return (
     <section className="flex flex-col gap-4">
@@ -46,6 +51,9 @@ export function AdminSchedulesPage() {
           </TabsTrigger>
           <TabsTrigger value="registrations" className="min-h-5 flex-1 md:px-6">
             Đơn đăng ký {registrationList.filter((r) => r.status === 'pending').length ? `(${registrationList.filter((r) => r.status === 'pending').length})` : ''}
+          </TabsTrigger>
+          <TabsTrigger value="proposals" className="min-h-5 flex-1 md:px-6">
+            Đề xuất ca {pendingProposals ? `(${pendingProposals})` : ''}
           </TabsTrigger>
         </TabsList>
 
@@ -76,6 +84,21 @@ export function AdminSchedulesPage() {
             </div>
           ) : (
             <RegistrationsList registrations={registrationList} />
+          )}
+        </TabsContent>
+
+        <TabsContent value="proposals" className="pt-3">
+          {proposals.isPending ? (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <Skeleton className="h-40" />
+              <Skeleton className="h-40" />
+            </div>
+          ) : proposals.isError ? (
+            <div role="alert" className="text-sm text-destructive">
+              Lỗi: {proposals.error.message}
+            </div>
+          ) : (
+            <ProposalsList proposals={proposalList} />
           )}
         </TabsContent>
       </Tabs>

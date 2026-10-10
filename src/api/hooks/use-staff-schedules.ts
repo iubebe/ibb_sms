@@ -129,3 +129,91 @@ export function useRejectRegistration() {
     },
   })
 }
+
+export async function proposeShifts(input: CreateStaffScheduleInput) {
+  const { data } = await apiClient.post<StaffSchedule[]>(API_ROUTES.staffSchedules.proposals, input)
+  return data
+}
+
+export async function getProposalsByWeek(weekStartDate: string) {
+  const { data } = await apiClient.get<StaffSchedule[]>(
+    API_ROUTES.staffSchedules.proposalsByWeek(weekStartDate),
+  )
+  return data
+}
+
+export async function getMyProposals(weekStartDate: string) {
+  const { data } = await apiClient.get<StaffSchedule[]>(
+    API_ROUTES.staffSchedules.myProposals(weekStartDate),
+  )
+  return data
+}
+
+export async function approveProposal(id: string, notes?: string) {
+  const { data } = await apiClient.post<StaffSchedule>(
+    API_ROUTES.staffSchedules.approveProposal(id),
+    { notes },
+  )
+  return data
+}
+
+export async function rejectProposal(id: string, notes?: string) {
+  const { data } = await apiClient.post<StaffSchedule>(
+    API_ROUTES.staffSchedules.rejectProposal(id),
+    { notes },
+  )
+  return data
+}
+
+export async function cancelProposal(id: string) {
+  const { data } = await apiClient.post<StaffSchedule>(
+    API_ROUTES.staffSchedules.cancelProposal(id),
+  )
+  return data
+}
+
+export function useProposalsByWeek(weekStartDate: string) {
+  return useQuery({
+    queryKey: queryKeys.staffSchedules.proposalsByWeek(weekStartDate),
+    queryFn: () => getProposalsByWeek(weekStartDate),
+  })
+}
+
+export function useMyProposals(weekStartDate: string) {
+  return useQuery({
+    queryKey: queryKeys.staffSchedules.myProposals(weekStartDate),
+    queryFn: () => getMyProposals(weekStartDate),
+  })
+}
+
+export function useProposeShifts() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: proposeShifts,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.staffSchedules.all }),
+  })
+}
+
+export function useApproveProposal() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (v: { id: string; notes?: string }) => approveProposal(v.id, v.notes),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.staffSchedules.all }),
+  })
+}
+
+export function useRejectProposal() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (v: { id: string; notes?: string }) => rejectProposal(v.id, v.notes),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.staffSchedules.all }),
+  })
+}
+
+export function useCancelProposal() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => cancelProposal(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.staffSchedules.all }),
+  })
+}

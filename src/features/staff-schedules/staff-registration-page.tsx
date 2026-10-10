@@ -1,10 +1,18 @@
-import { ChevronLeft, ChevronRight, Clock, CheckCircle, AlertCircle, Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Clock, CheckCircle, AlertCircle, Plus, Loader2, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { useSchedulesByWeek, useMyRegistrations, useRegisterForShift } from '@/api/hooks/use-staff-schedules'
+import { useSchedulesByWeek, useMyRegistrations, useMyProposals, useRegisterForShift, useCancelProposal } from '@/api/hooks/use-staff-schedules'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getWeekStartDate, addWeeks, getDayName } from '@/lib/date-utils'
 import { Badge } from '@/components/ui/badge'
+import { ProposeShiftSheet } from './propose-shift-sheet'
+
+const PROPOSAL_LABELS: Record<string, string> = {
+  proposed: 'Chờ duyệt',
+  scheduled: 'Đã duyệt',
+  rejected: 'Từ chối',
+  cancelled: 'Đã hủy',
+}
 
 export function StaffRegistrationPage() {
   const today = new Date()
@@ -12,6 +20,9 @@ export function StaffRegistrationPage() {
   const schedules = useSchedulesByWeek(weekStartDate)
   const myRegistrations = useMyRegistrations(weekStartDate)
   const register = useRegisterForShift()
+  const myProposals = useMyProposals(weekStartDate)
+  const cancelProposal = useCancelProposal()
+  const [proposeOpen, setProposeOpen] = useState(false)
 
   const handlePrevWeek = () => {
     setWeekStartDate(addWeeks(weekStartDate, -1))
@@ -29,11 +40,7 @@ export function StaffRegistrationPage() {
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-xl font-semibold">Đăng ký ca làm</h2>
-        <Button
-          className="min-h-9 md:flex"
-          disabled={availableShifts.length === 0}
-          title={availableShifts.length === 0 ? 'Không có ca làm nào để đăng ký' : ''}
-        >
+        <Button className="min-h-11 min-w-11" aria-label="Đề xuất ca làm" onClick={() => setProposeOpen(true)}>
           <Plus />
         </Button>
       </div>
@@ -58,7 +65,9 @@ export function StaffRegistrationPage() {
         </Button>
       </div>
 
-      {schedules.isPending || myRegistrations.isPending ? (
+      <ProposeShiftSheet weekStartDate={weekStartDate} open={proposeOpen} onClose={() => setProposeOpen(false)} />
+
+      {schedules.isPending || myRegistrations.isPending || myProposals.isPending ? (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <Skeleton className="h-40" />
           <Skeleton className="h-40" />
@@ -168,7 +177,72 @@ export function StaffRegistrationPage() {
             </div>
           )}
 
-          {availableShifts.length === 0 && registeredIds.size === 0 && (
+          {myProposals.isError && (
+            <p role="alert" className="text-sm text-destructive">
+              Lỗi: {myProposals.error.message}
+            </p>
+          )}
+
+          {(myProposals.data?.length ?? 0) > 0 && (
+            <div>
+              <h3 className="mb-3 font-medium text-sm">Đề xuất của tôi</h3>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {myProposals.data!.map((shift) => (
+                  <div key={shift.id} className="flex flex-col gap-2 rounded-lg border p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-medium">{getDayName(shift.dayOfWeek)}</p>
+                        <p className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          {shift.startTime} - {shift.endTime}
+                        </p>
+                      </div>
+                      <Badge
+                        variant={
+                          shift.status === 'scheduled'
+                            ? 'default'
+                            : shift.status === 'rejected'
+                              ? 'destructive'
+                              : 'secondary'
+                        }
+                      >
+                        {PROPOSAL_LABELS[shift.status] || shift.status}
+                      </Badge>
+                    </div>
+                    {shift.position && <p className="text-xs text-muted-foreground">{shift.position}</p>}
+                    {shift.reviewNotes && (
+                      <p className="text-xs text-muted-foreground italic">Ghi chú: {shift.reviewNotes}</p>
+                    )}
+
+                    {shift.status === 'proposed' && (
+                      <Button
+                        variant="outline"
+                        className="min-h-9 w-full text-sm text-destructive gap-1"
+                        disabled={cancelProposal.isPending}
+                        onClick={() => cancelProposal.mutate(shift.id)}
+                      >
+                        {cancelProposal.isPending && cancelProposal.variables === shift.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
+                        Hủy đề xuất
+                      </Button>
+                    )}
+
+                    {cancelProposal.isError && cancelProposal.variables === shift.id && (
+                      <p className="text-xs text-destructive flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        Lỗi: {cancelProposal.error.message}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {availableShifts.length === 0 && registeredIds.size === 0 && (myProposals.data?.length ?? 0) === 0 && (
             <p className="text-center text-sm text-muted-foreground py-8">
               Không có ca làm việc nào trong tuần này.
             </p>

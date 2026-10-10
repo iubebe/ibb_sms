@@ -63,5 +63,13 @@ export const API_ROUTES = {
       `/staff-schedules/my-registrations/${encodeURIComponent(weekStartDate)}`,
     approveRegistration: (id: string) => `/staff-schedules/registrations/${encodeURIComponent(id)}/approve`,
     rejectRegistration: (id: string) => `/staff-schedules/registrations/${encodeURIComponent(id)}/reject`,
+    proposals: '/staff-schedules/proposals',
+    myProposals: (weekStartDate: string) =>
+      `/staff-schedules/proposals/mine/${encodeURIComponent(weekStartDate)}`,
+    proposalsByWeek: (weekStartDate: string) =>
+      `/staff-schedules/proposals/by-week/${encodeURIComponent(weekStartDate)}`,
+    approveProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/approve`,
+    rejectProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/reject`,
+    cancelProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/cancel`,
   },
 } as const

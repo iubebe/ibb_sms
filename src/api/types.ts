@@ -269,7 +269,14 @@ export interface StaffSchedule {
   endTime: string
   shiftType: string | null
   position: string | null
+  /** scheduled | proposed | rejected | cancelled | no-show */
   status: string
+  proposedByUserId: string | null
+  reviewedByUserId: string | null
+  reviewedAt: string | null
+  reviewNotes: string | null
+  /** Set on the admin proposal list only. */
+  proposedByUser?: { id: string; name: string } | null
 }
 
 export interface ShiftInput {

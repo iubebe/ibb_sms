@@ -35,5 +35,7 @@ export const queryKeys = {
     byWeek: (weekStartDate: string) => ['staffSchedules', 'byWeek', weekStartDate] as const,
     registrationsByWeek: (weekStartDate: string) => ['staffSchedules', 'registrations', weekStartDate] as const,
     myRegistrations: (weekStartDate: string) => ['staffSchedules', 'myRegistrations', weekStartDate] as const,
+    proposalsByWeek: (weekStartDate: string) => ['staffSchedules', 'proposals', weekStartDate] as const,
+    myProposals: (weekStartDate: string) => ['staffSchedules', 'myProposals', weekStartDate] as const,
   },
 } as const
