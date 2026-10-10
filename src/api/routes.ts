@@ -50,4 +50,18 @@ export const API_ROUTES = {
       `/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(itemId)}/served`,
     paymentQrCodes: '/orders/payment-qr-codes',
   },
+  staffSchedules: {
+    list: (weekStartDate: string) => `/staff-schedules?weekStartDate=${encodeURIComponent(weekStartDate)}`,
+    create: '/staff-schedules',
+    detail: (id: string) => `/staff-schedules/${encodeURIComponent(id)}`,
+    update: (id: string) => `/staff-schedules/${encodeURIComponent(id)}`,
+    cancel: (id: string) => `/staff-schedules/${encodeURIComponent(id)}/cancel`,
+    register: (id: string) => `/staff-schedules/${encodeURIComponent(id)}/register`,
+    registrationsByWeek: (weekStartDate: string) =>
+      `/staff-schedules/registrations/by-week/${encodeURIComponent(weekStartDate)}`,
+    myRegistrations: (weekStartDate: string) =>
+      `/staff-schedules/my-registrations/${encodeURIComponent(weekStartDate)}`,
+    approveRegistration: (id: string) => `/staff-schedules/registrations/${encodeURIComponent(id)}/approve`,
+    rejectRegistration: (id: string) => `/staff-schedules/registrations/${encodeURIComponent(id)}/reject`,
+  },
 } as const

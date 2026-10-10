@@ -258,3 +258,48 @@ export interface AdjustAttendanceInput {
   checkInAt?: string
   checkOutAt?: string
 }
+
+export interface StaffSchedule {
+  id: string
+  branchId: string
+  assignedToUserId: string | null
+  weekStartDate: string
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  shiftType: string | null
+  position: string | null
+  status: string
+}
+
+export interface ShiftInput {
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  shiftType?: string
+  position?: string
+}
+
+export interface CreateStaffScheduleInput {
+  weekStartDate: string
+  shifts: ShiftInput[]
+}
+
+export interface UpdateStaffScheduleInput {
+  startTime?: string
+  endTime?: string
+  shiftType?: string
+  position?: string
+  status?: string
+  assignedToUserId?: string | null
+}
+
+export interface StaffShiftRegistration {
+  id: string
+  scheduleId: string
+  staffUserId: string
+  status: string
+  adminNotes: string | null
+  reviewedAt: string | null
+  reviewedByUserId: string | null
+}

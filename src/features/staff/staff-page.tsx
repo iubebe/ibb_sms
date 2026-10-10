@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AdminSchedulesPage } from '@/features/staff-schedules/admin-schedules-page'
 import { AttendancePanel } from './attendance-panel'
 import { UserPanel } from './user-panel'
 
@@ -15,12 +16,18 @@ export function StaffPage() {
           <TabsTrigger value="attendance" className="min-h-5 flex-1 md:px-6">
             Chấm công
           </TabsTrigger>
+          <TabsTrigger value="schedules" className="min-h-5 flex-1 md:px-6">
+            Lịch làm việc
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="accounts" className="pt-3">
           <UserPanel />
         </TabsContent>
         <TabsContent value="attendance" className="pt-3">
           <AttendancePanel />
+        </TabsContent>
+        <TabsContent value="schedules" className="pt-3">
+          <AdminSchedulesPage />
         </TabsContent>
       </Tabs>
     </section>

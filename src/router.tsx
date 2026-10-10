@@ -15,6 +15,7 @@ import { OrdersPage } from '@/features/orders/orders-page'
 import { ProductsPage } from '@/features/products/products-page'
 import { StaffPage } from '@/features/staff/staff-page'
 import { TablesPage } from '@/features/tables/tables-page'
+import { StaffRegistrationPage } from '@/features/staff-schedules/staff-registration-page'
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
           { path: 'staff', element: <StaffPage /> },
           { path: 'tables', element: <TablesPage /> },
         ],
+      },
+      {
+        element: <RoleRoute roles={['staff']} />,
+        children: [{ path: 'schedules/register', element: <StaffRegistrationPage /> }],
       },
       {
         element: <RoleRoute roles={['staff', 'cashier']} />,

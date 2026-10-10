@@ -30,4 +30,10 @@ export const queryKeys = {
     list: (status?: OrderStatus) => ['orders', 'list', status ?? 'all'] as const,
     paymentQrCodes: ['orders', 'paymentQrCodes'] as const,
   },
+  staffSchedules: {
+    all: ['staffSchedules'] as const,
+    byWeek: (weekStartDate: string) => ['staffSchedules', 'byWeek', weekStartDate] as const,
+    registrationsByWeek: (weekStartDate: string) => ['staffSchedules', 'registrations', weekStartDate] as const,
+    myRegistrations: (weekStartDate: string) => ['staffSchedules', 'myRegistrations', weekStartDate] as const,
+  },
 } as const
