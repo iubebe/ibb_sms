@@ -11,6 +11,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface CancelOrderDialogProps {
   /** `null` = closed. */
@@ -47,8 +49,7 @@ export function CancelOrderDialog({ order, onClose }: CancelOrderDialogProps) {
             Giữ đơn
           </AlertDialogCancel>
           <AlertDialogAction
-            variant="destructive"
-            className="min-h-11"
+            className={cn(buttonVariants({ variant: 'destructive' }), 'min-h-11')}
             disabled={pending}
             onClick={() => order && cancel.mutate(order.id, { onSuccess: close })}
           >

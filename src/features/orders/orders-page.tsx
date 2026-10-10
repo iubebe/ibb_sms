@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CancelOrderDialog } from "./cancel-order-dialog";
 import { CheckoutSheet } from "./checkout-sheet";
 import { OrderCard } from "./order-card";
+import { TablePaymentPage } from "./table-payment-page";
 
 /**
  * Order control. Admin/staff confirm, cancel and serve; admin/cashier check out.
@@ -20,7 +21,8 @@ export function OrdersPage() {
   const { data: me } = useMe();
   const role = me?.role;
   const canManage = role === "admin" || role === "staff";
-  const canCheckout = role === "admin" || role === "staff" || role === "cashier";
+  const canCheckout =
+    role === "admin" || role === "staff" || role === "cashier";
   const canCreateOrder = role === "admin" || role === "staff";
 
   const [cancelTarget, setCancelTarget] = useState<StaffOrder | null>(null);
@@ -54,7 +56,7 @@ export function OrdersPage() {
       </div>
 
       <Tabs defaultValue={defaultTab}>
-        <TabsList className="w-full md:w-fit">
+        <TabsList className="w-full flex-wrap">
           {canManage && (
             <TabsTrigger
               value="pending_confirmation"
@@ -68,6 +70,14 @@ export function OrdersPage() {
             {canManage ? "Đang phục vụ" : "Chờ thanh toán"}
             {confirmed.data?.length ? ` (${confirmed.data.length})` : ""}
           </TabsTrigger>
+          {canCheckout && (
+            <TabsTrigger
+              value="table_payment"
+              className="min-h-5 flex-1 md:px-6"
+            >
+              Thanh toán theo bàn
+            </TabsTrigger>
+          )}
         </TabsList>
 
         {canManage && (
@@ -82,6 +92,11 @@ export function OrdersPage() {
         <TabsContent value="confirmed" className="pt-3">
           <OrderList query={confirmed} status="confirmed" {...cardProps} />
         </TabsContent>
+        {canCheckout && (
+          <TabsContent value="table_payment" className="pt-3">
+            <TablePaymentPage />
+          </TabsContent>
+        )}
       </Tabs>
 
       <CancelOrderDialog

@@ -43,17 +43,15 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
       <div className="flex min-h-svh min-w-0 flex-col">
         <header className="sticky top-0 z-10 flex items-center gap-2 border-b bg-background/90 px-4 pt-[env(safe-area-inset-top)] backdrop-blur md:hidden">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-            <SheetTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="min-h-11 min-w-11"
-                  aria-label="Mở menu"
-                />
-              }
-            >
-              <Menu />
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="min-h-11 min-w-11"
+                aria-label="Mở menu"
+              >
+                <Menu />
+              </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-3/4 max-w-xs">
               <SheetHeader>

@@ -253,12 +253,12 @@ export function CreateOrderPage() {
       {orderItems.length > 0 && (
         <>
           <Sheet open={cartOpen} onOpenChange={setCartOpen}>
-            <SheetContent side="right" className="h-fit">
+            <SheetContent side="right" className="h-full">
               <SheetHeader>
                 <SheetTitle>Xác nhận đơn hàng</SheetTitle>
               </SheetHeader>
 
-              <div className="flex flex-col gap-4 p-4">
+              <div className="flex flex-col gap-4 py-3">
                 <div className="space-y-2">
                   {orderItems.map((item) => (
                     <div

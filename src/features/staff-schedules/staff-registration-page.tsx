@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Clock, CheckCircle, AlertCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Clock, CheckCircle, AlertCircle, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useSchedulesByWeek, useMyRegistrations, useRegisterForShift } from '@/api/hooks/use-staff-schedules'
 import { Button } from '@/components/ui/button'
@@ -28,25 +28,34 @@ export function StaffRegistrationPage() {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="min-h-9 min-w-9"
-            onClick={handlePrevWeek}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="min-w-48 text-center text-sm font-medium">Tuần {weekStartDate}</span>
-          <Button
-            variant="outline"
-            size="icon"
-            className="min-h-9 min-w-9"
-            onClick={handleNextWeek}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+        <h2 className="text-xl font-semibold">Đăng ký ca làm</h2>
+        <Button
+          className="min-h-9 md:flex"
+          disabled={availableShifts.length === 0}
+          title={availableShifts.length === 0 ? 'Không có ca làm nào để đăng ký' : ''}
+        >
+          <Plus />
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          className="min-h-9 min-w-9"
+          onClick={handlePrevWeek}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <span className="min-w-48 text-center text-sm font-medium">Tuần {weekStartDate}</span>
+        <Button
+          variant="outline"
+          size="icon"
+          className="min-h-9 min-w-9"
+          onClick={handleNextWeek}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </div>
 
       {schedules.isPending || myRegistrations.isPending ? (
