@@ -16,6 +16,9 @@ export const queryKeys = {
   tables: {
     all: ['tables'] as const,
   },
+  paymentQrCodes: {
+    all: ['paymentQrCodes'] as const,
+  },
   users: {
     all: ['users'] as const,
   },

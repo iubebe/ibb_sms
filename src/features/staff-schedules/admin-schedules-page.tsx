@@ -1,59 +1,80 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useState } from 'react'
-import { useProposalsByWeek, useRegistrationsByWeek, useSchedulesByWeek } from '@/api/hooks/use-staff-schedules'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getWeekStartDate, addWeeks } from '@/lib/date-utils'
-import { ProposalsList } from './proposals-list'
-import { RegistrationsList } from './registrations-list'
-import { SchedulesList } from './schedules-list'
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import {
+  useProposalsByWeek,
+  useRegistrationsByWeek,
+  useSchedulesByWeek,
+} from "@/api/hooks/use-staff-schedules";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getWeekStartDate, addWeeks } from "@/lib/date-utils";
+import { ProposalsList } from "./proposals-list";
+import { RegistrationsList } from "./registrations-list";
+import { SchedulesList } from "./schedules-list";
 
 export function AdminSchedulesPage() {
-  const today = new Date()
-  const [weekStartDate, setWeekStartDate] = useState(getWeekStartDate(today))
-  const schedules = useSchedulesByWeek(weekStartDate)
-  const registrations = useRegistrationsByWeek(weekStartDate)
-  const proposals = useProposalsByWeek(weekStartDate)
+  const today = new Date();
+  const [weekStartDate, setWeekStartDate] = useState(getWeekStartDate(today));
+  const schedules = useSchedulesByWeek(weekStartDate);
+  const registrations = useRegistrationsByWeek(weekStartDate);
+  const proposals = useProposalsByWeek(weekStartDate);
 
   const handlePrevWeek = () => {
-    setWeekStartDate(addWeeks(weekStartDate, -1))
-  }
+    setWeekStartDate(addWeeks(weekStartDate, -1));
+  };
 
   const handleNextWeek = () => {
-    setWeekStartDate(addWeeks(weekStartDate, 1))
-  }
+    setWeekStartDate(addWeeks(weekStartDate, 1));
+  };
 
   // Proposals are reviewed in their own tab; keep them out of the shift list.
-  const scheduleList = (schedules.data || []).filter((s) => s.status !== 'proposed' && s.status !== 'rejected')
-  const registrationList = registrations.data || []
-  const proposalList = proposals.data || []
-  const pendingProposals = proposalList.filter((p) => p.status === 'proposed').length
+  const scheduleList = (schedules.data || []).filter(
+    (s) => s.status !== "proposed" && s.status !== "rejected",
+  );
+  const registrationList = registrations.data || [];
+  const proposalList = proposals.data || [];
+  const pendingProposals = proposalList.filter(
+    (p) => p.status === "proposed",
+  ).length;
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" className="min-h-9 min-w-9" onClick={handlePrevWeek}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="min-w-48 text-center text-sm font-medium">Tuần {weekStartDate}</span>
-          <Button variant="outline" size="icon" className="min-h-9 min-w-9" onClick={handleNextWeek}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+      <div className="flex w-full items-center justify-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          className="min-h-9 min-w-9"
+          onClick={handlePrevWeek}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <span className="min-w-48 text-center text-sm font-medium">
+          Tuần {weekStartDate}
+        </span>
+        <Button
+          variant="outline"
+          size="icon"
+          className="min-h-9 min-w-9"
+          onClick={handleNextWeek}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </div>
 
       <Tabs defaultValue="schedules" className="w-full">
         <TabsList className="w-full md:w-fit">
           <TabsTrigger value="schedules" className="min-h-5 flex-1 md:px-6">
-            Ca làm việc {scheduleList.length ? `(${scheduleList.length})` : ''}
+            Ca làm việc {scheduleList.length ? `(${scheduleList.length})` : ""}
           </TabsTrigger>
           <TabsTrigger value="registrations" className="min-h-5 flex-1 md:px-6">
-            Đơn đăng ký {registrationList.filter((r) => r.status === 'pending').length ? `(${registrationList.filter((r) => r.status === 'pending').length})` : ''}
+            Đơn đăng ký{" "}
+            {registrationList.filter((r) => r.status === "pending").length
+              ? `(${registrationList.filter((r) => r.status === "pending").length})`
+              : ""}
           </TabsTrigger>
           <TabsTrigger value="proposals" className="min-h-5 flex-1 md:px-6">
-            Đề xuất ca {pendingProposals ? `(${pendingProposals})` : ''}
+            Đề xuất ca {pendingProposals ? `(${pendingProposals})` : ""}
           </TabsTrigger>
         </TabsList>
 
@@ -103,5 +124,5 @@ export function AdminSchedulesPage() {
         </TabsContent>
       </Tabs>
     </section>
-  )
+  );
 }

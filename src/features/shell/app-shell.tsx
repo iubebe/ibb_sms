@@ -30,6 +30,8 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
   const navItems = NAV_ITEMS.filter(
     (item) => !item.roles || item.roles.includes(role),
   );
+
+  const navBottomItems = navItems.filter((item) => item.hiddenInNav !== true);
   const title = navItems.find((item) => isActive(item.to, pathname))?.label;
 
   return (
@@ -65,7 +67,11 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
                   <Brand />
                 </SheetTitle>
               </SheetHeader>
-              <SideNav items={navItems} className="mt-4" onNavigate={() => setMenuOpen(false)} />
+              <SideNav
+                items={navItems}
+                className="mt-4"
+                onNavigate={() => setMenuOpen(false)}
+              />
 
               <UserMenu
                 userName={userName}
@@ -85,7 +91,7 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
           aria-label="Điều hướng chính"
           className="fixed inset-x-0 bottom-0 z-10 flex border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
         >
-          {navItems.map(({ to, label, icon: Icon }) => (
+          {navBottomItems.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}

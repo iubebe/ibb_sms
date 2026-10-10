@@ -63,9 +63,13 @@ export type PaymentMethod = 'cash' | 'qr_manual'
 
 export interface PaymentQrCode {
   id: string
+  branchId: string
   label: string
+  /** Public image URL (S3). Named `imagePath` for the existing checkout contract. */
   imagePath: string
   isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 /** Result of confirm / cancel / pay on an order. */

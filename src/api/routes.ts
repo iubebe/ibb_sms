@@ -72,4 +72,11 @@ export const API_ROUTES = {
     rejectProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/reject`,
     cancelProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/cancel`,
   },
+  paymentQrCodes: {
+    list: '/payment-qr-codes',
+    create: '/payment-qr-codes',
+    update: (id: string) => `/payment-qr-codes/${encodeURIComponent(id)}`,
+    image: (id: string) => `/payment-qr-codes/${encodeURIComponent(id)}/image`,
+    remove: (id: string) => `/payment-qr-codes/${encodeURIComponent(id)}`,
+  },
 } as const
