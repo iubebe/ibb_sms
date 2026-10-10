@@ -60,7 +60,7 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
+      className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
     >
       <SheetHeader className="px-0">
         <SheetTitle>Thanh toán · {order.tableName ?? 'Không có bàn'}</SheetTitle>

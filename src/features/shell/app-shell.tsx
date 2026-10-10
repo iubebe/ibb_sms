@@ -1,22 +1,22 @@
-import { LogOut, Menu, Store } from 'lucide-react'
-import { useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router'
-import type { UserRole } from '@/api/types'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { LogOut, Menu, Store } from "lucide-react";
+import { useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router";
+import type { UserRole } from "@/api/types";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { cn } from '@/lib/utils'
-import { NAV_ITEMS, type NavItem } from './nav-items'
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { NAV_ITEMS, type NavItem } from "./nav-items";
 
 interface AppShellProps {
-  userName: string
-  role: UserRole
-  onLogout: () => void
+  userName: string;
+  role: UserRole;
+  onLogout: () => void;
 }
 
 /**
@@ -25,10 +25,12 @@ interface AppShellProps {
  * md and up: fixed sidebar, no bottom bar.
  */
 export function AppShell({ userName, role, onLogout }: AppShellProps) {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const { pathname } = useLocation()
-  const navItems = NAV_ITEMS.filter((item) => !item.roles || item.roles.includes(role))
-  const title = navItems.find((item) => isActive(item.to, pathname))?.label
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { pathname } = useLocation();
+  const navItems = NAV_ITEMS.filter(
+    (item) => !item.roles || item.roles.includes(role),
+  );
+  const title = navItems.find((item) => isActive(item.to, pathname))?.label;
 
   return (
     <div className="min-h-svh md:grid md:grid-cols-[14rem_1fr]">
@@ -36,7 +38,11 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
         <div className="sticky top-0 flex h-svh flex-col gap-4 p-4">
           <Brand />
           <SideNav items={navItems} />
-          <UserMenu userName={userName} onLogout={onLogout} className="mt-auto" />
+          <UserMenu
+            userName={userName}
+            onLogout={onLogout}
+            className="mt-auto"
+          />
         </div>
       </aside>
 
@@ -53,17 +59,18 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
                 <Menu />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-3/4 max-w-xs">
+            <SheetContent side="left" className="w-3/4 max-w-xs flex flex-col">
               <SheetHeader>
                 <SheetTitle>
                   <Brand />
                 </SheetTitle>
               </SheetHeader>
-              <SideNav items={navItems} className="px-4" onNavigate={() => setMenuOpen(false)} />
+              <SideNav items={navItems} className="mt-4" onNavigate={() => setMenuOpen(false)} />
+
               <UserMenu
                 userName={userName}
                 onLogout={onLogout}
-                className="mt-auto px-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
+                className="mt-auto pb-[max(1rem,env(safe-area-inset-bottom))]"
               />
             </SheetContent>
           </Sheet>
@@ -82,11 +89,13 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
             <NavLink
               key={to}
               to={to}
-              end={to === '/'}
+              end={to === "/"}
               className={({ isActive }) =>
                 cn(
-                  'flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs transition-colors active:bg-muted',
-                  isActive ? 'font-medium text-foreground' : 'text-muted-foreground',
+                  "flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs transition-colors active:bg-muted",
+                  isActive
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground",
                 )
               }
             >
@@ -97,11 +106,13 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
         </nav>
       </div>
     </div>
-  )
+  );
 }
 
 function isActive(to: string, pathname: string) {
-  return to === '/' ? pathname === '/' : pathname === to || pathname.startsWith(`${to}/`)
+  return to === "/"
+    ? pathname === "/"
+    : pathname === to || pathname.startsWith(`${to}/`);
 }
 
 function SideNav({
@@ -109,22 +120,22 @@ function SideNav({
   className,
   onNavigate,
 }: {
-  items: NavItem[]
-  className?: string
-  onNavigate?: () => void
+  items: NavItem[];
+  className?: string;
+  onNavigate?: () => void;
 }) {
   return (
-    <nav className={cn('flex flex-col gap-1', className)}>
+    <nav className={cn("flex flex-col gap-1", className)}>
       {items.map(({ to, label, icon: Icon }) => (
         <NavLink
           key={to}
           to={to}
-          end={to === '/'}
+          end={to === "/"}
           onClick={onNavigate}
           className={({ isActive }) =>
             cn(
-              buttonVariants({ variant: isActive ? 'secondary' : 'ghost' }),
-              'min-h-11 justify-start gap-3 px-3',
+              buttonVariants({ variant: isActive ? "secondary" : "ghost" }),
+              "min-h-11 justify-start gap-3 px-3",
             )
           }
         >
@@ -133,7 +144,7 @@ function SideNav({
         </NavLink>
       ))}
     </nav>
-  )
+  );
 }
 
 function Brand() {
@@ -142,7 +153,7 @@ function Brand() {
       <Store className="size-5" />
       Iubebe SMS
     </div>
-  )
+  );
 }
 
 function UserMenu({
@@ -150,17 +161,21 @@ function UserMenu({
   onLogout,
   className,
 }: {
-  userName: string
-  onLogout: () => void
-  className?: string
+  userName: string;
+  onLogout: () => void;
+  className?: string;
 }) {
   return (
-    <div className={cn('flex flex-col gap-2', className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       <p className="truncate text-sm text-muted-foreground">{userName}</p>
-      <Button variant="outline" className="min-h-11 justify-start gap-3 px-3" onClick={onLogout}>
+      <Button
+        variant="outline"
+        className="min-h-11 justify-start gap-3 px-3"
+        onClick={onLogout}
+      >
         <LogOut />
         Đăng xuất
       </Button>
     </div>
-  )
+  );
 }

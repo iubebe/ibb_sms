@@ -157,6 +157,7 @@ export function CreateOrderPage() {
           size="lg"
           className="min-h-9 md:flex relative"
           onClick={() => setCartOpen(true)}
+          disabled={orderItems.length === 0}
           title="Xem giỏ hàng"
         >
           <ShoppingCart className="h-6 w-6" />
@@ -202,7 +203,7 @@ export function CreateOrderPage() {
                     className="flex items-center justify-between gap-2 rounded-lg border bg-card p-3 text-card-foreground"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium">{product.name}</p>
+                      <p className="wrap-break-words font-medium">{product.name}</p>
                       <p className="text-sm text-muted-foreground">
                         {product.price.toLocaleString("vi-VN")}₫
                       </p>
@@ -253,26 +254,36 @@ export function CreateOrderPage() {
       {orderItems.length > 0 && (
         <>
           <Sheet open={cartOpen} onOpenChange={setCartOpen}>
-            <SheetContent side="right" className="h-full">
+            <SheetContent side="right" className="flex flex-col">
               <SheetHeader>
                 <SheetTitle>Xác nhận đơn hàng</SheetTitle>
               </SheetHeader>
 
-              <div className="flex flex-col gap-4 py-3">
-                <div className="space-y-2">
+              <div className="flex flex-1 flex-col gap-4 overflow-hidden py-3">
+                <div className="space-y-2 overflow-y-auto">
                   {orderItems.map((item) => (
                     <div
                       key={item.product.id}
-                      className="flex items-start justify-between gap-2 rounded border bg-muted p-3"
+                      className="flex flex-col gap-2 rounded border bg-muted p-3 sm:flex-row sm:items-start sm:justify-between"
                     >
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium">{item.product.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.quantity}x{" "}
-                          {item.product.price.toLocaleString("vi-VN")}₫
-                        </p>
+                      <div className="flex flex-row justify-between">
+                        <div className="flex flex-col">
+                          <p className="font-medium">{item.product.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.quantity}x{" "}
+                            {item.product.price.toLocaleString("vi-VN")}₫
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="min-h-5 min-w-5"
+                          onClick={() => removeItem(item.product.id)}
+                        >
+                          ✕
+                        </Button>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center justify-between gap-1 sm:justify-end">
                         <Button
                           variant="outline"
                           size="sm"
@@ -296,41 +307,33 @@ export function CreateOrderPage() {
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="min-h-8 min-w-8"
-                          onClick={() => removeItem(item.product.id)}
-                        >
-                          ✕
-                        </Button>
                       </div>
                     </div>
                   ))}
                 </div>
+              </div>
 
-                <div className="border-t pt-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="font-medium">Tổng cộng:</span>
-                    <span className="text-xl font-semibold">
-                      {calculateTotal().toLocaleString("vi-VN")}₫
-                    </span>
-                  </div>
-
-                  <Button
-                    className="min-h-11 w-full"
-                    onClick={handleSubmit}
-                    disabled={createOrder.isPending}
-                  >
-                    {createOrder.isPending ? "Đang tạo..." : "Tạo đơn hàng"}
-                  </Button>
-
-                  {createOrder.isError && (
-                    <p className="mt-2 text-sm text-destructive">
-                      {createOrder.error.message}
-                    </p>
-                  )}
+              <div className="border-t pt-4">
+                <div className="mb-4 flex items-center justify-between">
+                  <span className="font-medium">Tổng cộng:</span>
+                  <span className="text-xl font-semibold">
+                    {calculateTotal().toLocaleString("vi-VN")}₫
+                  </span>
                 </div>
+
+                <Button
+                  className="min-h-11 w-full"
+                  onClick={handleSubmit}
+                  disabled={createOrder.isPending}
+                >
+                  {createOrder.isPending ? "Đang tạo..." : "Tạo đơn hàng"}
+                </Button>
+
+                {createOrder.isError && (
+                  <p className="mt-2 text-sm text-destructive">
+                    {createOrder.error.message}
+                  </p>
+                )}
               </div>
             </SheetContent>
           </Sheet>
