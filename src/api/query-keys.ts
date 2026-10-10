@@ -28,5 +28,6 @@ export const queryKeys = {
   orders: {
     all: ['orders'] as const,
     list: (status?: OrderStatus) => ['orders', 'list', status ?? 'all'] as const,
+    paymentQrCodes: ['orders', 'paymentQrCodes'] as const,
   },
 } as const

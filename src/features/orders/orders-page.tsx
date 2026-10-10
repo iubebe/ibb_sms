@@ -20,7 +20,7 @@ export function OrdersPage() {
   const { data: me } = useMe();
   const role = me?.role;
   const canManage = role === "admin" || role === "staff";
-  const canCheckout = role === "admin" || role === "cashier";
+  const canCheckout = role === "admin" || role === "staff" || role === "cashier";
   const canCreateOrder = role === "admin" || role === "staff";
 
   const [cancelTarget, setCancelTarget] = useState<StaffOrder | null>(null);

@@ -61,6 +61,13 @@ export interface CreateOrderStaffInput {
 
 export type PaymentMethod = 'cash' | 'qr_manual'
 
+export interface PaymentQrCode {
+  id: string
+  label: string
+  imagePath: string
+  isActive: boolean
+}
+
 /** Result of confirm / cancel / pay on an order. */
 export interface OrderTransition {
   id: string
