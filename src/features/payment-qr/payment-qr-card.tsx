@@ -1,5 +1,5 @@
 import { Pencil, Trash2 } from 'lucide-react'
-import { useUpdatePaymentQrCode } from '@/api/hooks/use-payment-qr-codes'
+import { useUpdatePaymentQrCode, paymentQrImageUrl } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentQrCode } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,11 +13,12 @@ interface PaymentQrCardProps {
 
 export function PaymentQrCard({ code, onEdit, onDelete }: PaymentQrCardProps) {
   const toggle = useUpdatePaymentQrCode()
+  const imageUrl = paymentQrImageUrl(code.id)
 
   return (
     <div className="flex min-w-0 flex-col gap-3 rounded-lg border p-3">
       <img
-        src={code.imagePath}
+        src={imageUrl}
         alt={code.label}
         loading="lazy"
         className="aspect-square w-full max-w-full rounded-md bg-white object-contain p-2"

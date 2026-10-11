@@ -1,6 +1,7 @@
 import { Banknote, Loader2, QrCode, TriangleAlert } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { usePayOrder, usePaymentQrCodes } from '@/api/hooks'
+import { paymentQrImageUrl } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentMethod, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -141,7 +142,7 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
               <div className="flex flex-col gap-2">
                 {qrCodes.map((qr) => (
                   <div key={qr.id} className="flex flex-col items-center gap-2 rounded-lg border p-3">
-                    <img src={qr.imagePath} alt={qr.label} className="h-48 w-48 object-contain" />
+                    <img src={paymentQrImageUrl(qr.id)} alt={qr.label} className="h-48 w-48 object-contain" />
                     <p className="text-sm font-medium">{qr.label}</p>
                   </div>
                 ))}

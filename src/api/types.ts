@@ -65,7 +65,7 @@ export interface PaymentQrCode {
   id: string
   branchId: string
   label: string
-  /** Public image URL (S3). Named `imagePath` for the existing checkout contract. */
+  /** S3 key of the image (private, fetched via GET /payment-qr-codes/:id/image). Named `imagePath` for API compatibility. */
   imagePath: string
   isActive: boolean
   createdAt: string

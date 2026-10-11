@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { env } from '@/config/env'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
@@ -7,6 +8,11 @@ import type { PaymentQrCode } from '@/api/types'
 export interface PaymentQrCodeFields {
   label?: string
   isActive?: boolean
+}
+
+/** Images are served via authenticated endpoint (admin, staff, cashier); cookie authorizes the request. */
+export function paymentQrImageUrl(id: string): string {
+  return `${env.apiUrl}${API_ROUTES.paymentQrCodes.image(id)}`
 }
 
 export async function listPaymentQrCodes() {

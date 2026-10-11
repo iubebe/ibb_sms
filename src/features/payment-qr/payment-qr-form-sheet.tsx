@@ -4,6 +4,7 @@ import {
   useCreatePaymentQrCode,
   useReplacePaymentQrImage,
   useUpdatePaymentQrCode,
+  paymentQrImageUrl,
 } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentQrCode } from '@/api/types'
 import { Button } from '@/components/ui/button'
@@ -52,7 +53,8 @@ function PaymentQrForm({ code, onDone }: { code: PaymentQrCode | null; onDone: (
     if (previewUrl) URL.revokeObjectURL(previewUrl)
   }, [previewUrl])
 
-  const shown = previewUrl ?? code?.imagePath ?? null
+  const existingImageUrl = code ? paymentQrImageUrl(code.id) : null
+  const shown = previewUrl ?? existingImageUrl ?? null
   const isCreate = code === null
   const trimmed = label.trim()
   const labelChanged = !isCreate && trimmed !== code.label
