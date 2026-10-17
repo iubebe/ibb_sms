@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { History, Plus } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useMe, useOrders } from "@/api/hooks";
@@ -65,14 +65,26 @@ export function OrdersPage() {
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-xl font-semibold">Đơn hàng</h2>
-        {canCreateOrder && (
-          <Button
-            className="min-h-9 md:flex"
-            onClick={() => navigate("/orders/create")}
-          >
-            <Plus />
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {role === "admin" && (
+            <Button
+              variant="outline"
+              className="min-h-9"
+              onClick={() => navigate("/orders/history")}
+            >
+              <History />
+              Lịch sử
+            </Button>
+          )}
+          {canCreateOrder && (
+            <Button
+              className="min-h-9 md:flex"
+              onClick={() => navigate("/orders/create")}
+            >
+              <Plus />
+            </Button>
+          )}
+        </div>
       </div>
 
       <Tabs value={selectedTab} onValueChange={setSelectedTab}>

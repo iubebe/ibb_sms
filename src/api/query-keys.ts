@@ -31,6 +31,7 @@ export const queryKeys = {
   orders: {
     all: ['orders'] as const,
     list: (status?: OrderStatus) => ['orders', 'list', status ?? 'all'] as const,
+    history: (from: string, to: string) => ['orders', 'history', from, to] as const,
     paymentQrCodes: ['orders', 'paymentQrCodes'] as const,
   },
   staffSchedules: {

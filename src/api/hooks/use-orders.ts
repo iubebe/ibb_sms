@@ -9,6 +9,12 @@ export async function getOrders(status?: OrderStatus) {
   return data
 }
 
+/** Admin: every order created in `[from, to)` (ISO timestamps). */
+export async function getOrderHistory(from: string, to: string) {
+  const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.history, { params: { from, to } })
+  return data
+}
+
 export async function createOrderForStaff(input: CreateOrderStaffInput) {
   const { data } = await apiClient.post<StaffOrder>(API_ROUTES.orders.create, input)
   return data
@@ -44,6 +50,14 @@ export function useOrders(status?: OrderStatus) {
     queryFn: () => getOrders(status),
     staleTime: 5_000,
     refetchInterval: 15_000,
+  })
+}
+
+export function useOrderHistory(from: string, to: string) {
+  return useQuery({
+    queryKey: queryKeys.orders.history(from, to),
+    queryFn: () => getOrderHistory(from, to),
+    staleTime: 30_000,
   })
 }
 

@@ -3,6 +3,7 @@ import {
   Calendar,
   ClipboardList,
   CreditCard,
+  History,
   LayoutDashboard,
   ScanFace,
   Package,
@@ -36,6 +37,13 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Đăng ký ca làm",
     icon: Calendar,
     roles: ["staff"],
+  },
+  {
+    to: "/orders/history",
+    label: "Lịch sử đơn",
+    icon: History,
+    roles: ["admin"],
+    hiddenInNav: true,
   },
   {
     to: "/tables",

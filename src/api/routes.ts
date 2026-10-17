@@ -42,6 +42,7 @@ export const API_ROUTES = {
   },
   orders: {
     list: '/orders',
+    history: '/orders/history',
     create: '/orders',
     confirm: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/confirm`,
     cancel: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/cancel`,
