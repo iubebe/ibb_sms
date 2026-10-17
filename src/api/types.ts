@@ -187,6 +187,8 @@ export interface ManagedUser {
   email: string
   role: UserRole
   isActive: boolean
+  /** VND per worked hour; `null` = not set (salary not estimated). */
+  hourlyRate: number | null
   /** Still on a temporary password. */
   mustChangePassword: boolean
   createdAt: string
@@ -200,7 +202,7 @@ export interface CreateUserInput {
   password: string
 }
 
-export type UpdateUserInput = Partial<Pick<ManagedUser, 'name' | 'email' | 'role' | 'isActive'>>
+export type UpdateUserInput = Partial<Pick<ManagedUser, 'name' | 'email' | 'role' | 'isActive' | 'hourlyRate'>>
 
 export type FaceCheckStatus = 'pending' | 'passed' | 'failed'
 /** `incomplete` = open longer than the max shift, i.e. a forgotten check-out. */
@@ -394,4 +396,66 @@ export interface ImportInput {
   importedAt?: string
   note?: string
   lines: { stockItemId: string; quantity: number; unitCost: number }[]
+}
+
+/** `ibb_shop_backend/src/modules/finance` (admin only). */
+export type ExpenseCategory = 'rent' | 'electricity' | 'water' | 'internet' | 'gas' | 'maintenance' | 'marketing' | 'other'
+
+export interface Expense {
+  id: string
+  category: ExpenseCategory
+  amount: number
+  /** `YYYY-MM-DD` */
+  incurredOn: string
+  note: string | null
+  createdByName: string | null
+  createdAt: string
+}
+
+export interface ExpenseInput {
+  category: ExpenseCategory
+  amount: number
+  incurredOn: string
+  note: string
+}
+
+export interface FinanceTotals {
+  revenue: number
+  paidOrders: number
+  /** Cash spent on stock imports (not cost of goods sold). */
+  importCost: number
+  operatingCost: number
+  /** Estimated: worked hours x hourly rate. */
+  salaryCost: number
+  totalCost: number
+  profit: number
+}
+
+export interface FinanceSalaryLine {
+  userId: string
+  name: string
+  hours: number
+  hourlyRate: number | null
+  amount: number
+}
+
+export interface FinanceDay {
+  /** `YYYY-MM-DD` */
+  date: string
+  revenue: number
+  importCost: number
+  operatingCost: number
+  salaryCost: number
+}
+
+export interface FinanceSummary {
+  from: string
+  to: string
+  totals: FinanceTotals
+  revenueByMethod: { method: PaymentMethod | null; amount: number }[]
+  expensesByCategory: { category: ExpenseCategory; amount: number }[]
+  salary: FinanceSalaryLine[]
+  /** Staff who worked in the range but have no hourly rate. */
+  staffWithoutRate: number
+  daily: FinanceDay[]
 }

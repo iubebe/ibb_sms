@@ -11,6 +11,7 @@ import { CheckInPage } from '@/features/check-in/check-in-page'
 import { DashboardPage } from '@/features/dashboard/dashboard-page'
 import { PageNotFound } from '@/features/errors/page-not-found'
 import { CreateOrderPage } from '@/features/orders/create-order-page'
+import { FinancePage } from '@/features/finance/finance-page'
 import { OrderHistoryPage } from '@/features/orders/order-history-page'
 import { OrdersPage } from '@/features/orders/orders-page'
 import { PaymentQrPage } from '@/features/payment-qr/payment-qr-page'
@@ -46,6 +47,7 @@ export const router = createBrowserRouter([
           { path: 'payment-qr', element: <PaymentQrPage /> },
           { path: 'staff', element: <StaffPage /> },
           { path: 'stock', element: <StockPage /> },
+          { path: 'finance', element: <FinancePage /> },
           { path: 'tables', element: <TablesPage /> },
         ],
       },

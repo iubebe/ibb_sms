@@ -160,6 +160,11 @@ export function useCreateImport() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createImport,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['stock'] }),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['stock'] }),
+        // Import cost is part of the finance summary.
+        queryClient.invalidateQueries({ queryKey: queryKeys.finance.all }),
+      ]),
   })
 }

@@ -9,6 +9,7 @@ import {
   Package,
   QrCode,
   Users,
+  Wallet,
   Warehouse,
   type LucideIcon,
 } from "lucide-react";
@@ -61,5 +62,6 @@ export const NAV_ITEMS: NavItem[] = [
     hiddenInNav: true,
   },
   { to: "/stock", label: "Kho", icon: Warehouse, roles: ["admin"] },
+  { to: "/finance", label: "Tài chính", icon: Wallet, roles: ["admin"] },
   { to: "/staff", label: "Nhân sự", icon: Users, roles: ["admin"] },
 ];
