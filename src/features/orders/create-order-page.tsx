@@ -1,4 +1,4 @@
-import { ChevronLeft, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Minus, Plus, Repeat, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useCreateOrder } from "@/api/hooks";
@@ -14,6 +14,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+const DEFAULT_TABLE_NAME = "online";
+
 interface OrderItem {
   product: Product;
   quantity: number;
@@ -26,9 +28,21 @@ export function CreateOrderPage() {
   const products = useProducts();
   const createOrder = useCreateOrder();
 
-  const [selectedTable, setSelectedTable] = useState<DiningTable | null>(null);
+  const [pickedTable, setPickedTable] = useState<DiningTable | null>(null);
+  const [choosingTable, setChoosingTable] = useState(false);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+
+  // Fast path: default to the "Online" table so staff can start adding items at once.
+  const defaultTable = tables.data?.find(
+    (t) => t.name.trim().toLowerCase() === DEFAULT_TABLE_NAME,
+  );
+  const selectedTable = choosingTable ? null : (pickedTable ?? defaultTable ?? null);
+
+  function setSelectedTable(table: DiningTable | null) {
+    setPickedTable(table);
+    setChoosingTable(table === null);
+  }
 
   function addItem(product: Product) {
     const existing = orderItems.find((i) => i.product.id === product.id);
@@ -94,6 +108,11 @@ export function CreateOrderPage() {
 
         <div className="flex flex-col gap-2">
           <p className="text-sm text-muted-foreground">Chọn bàn</p>
+          {tables.data && !defaultTable && !pickedTable && (
+            <p className="text-xs text-muted-foreground">
+              Chưa có bàn "Online". Tạo bàn tên "Online" ở trang Bàn để đặt làm mặc định.
+            </p>
+          )}
           {tables.isPending && (
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
               <Skeleton className="h-20" />
@@ -142,16 +161,17 @@ export function CreateOrderPage() {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-2 pr-3">
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">{selectedTable.name}</h2>
           <Button
-            variant="ghost"
-            size="icon"
-            className="min-h-11 min-w-11"
+            variant="outline"
+            size="sm"
+            className="min-h-9"
             onClick={() => setSelectedTable(null)}
           >
-            <ChevronLeft />
+            <Repeat className="h-4 w-4" />
+            Đổi bàn
           </Button>
-          <h2 className="text-xl font-semibold">{selectedTable.name}</h2>
         </div>
         <Button
           size="lg"
