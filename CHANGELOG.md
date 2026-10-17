@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.2.0...ibb_sms-v1.3.0) (2026-10-17)
+
+
+### Features
+
+* order, finance, stock and qrcode ([4d41df3](https://github.com/iubebe/ibb_sms/commit/4d41df3f432a9cf63af9d76c71f3c4d7141a6e2d))
+
 ## [1.2.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.1.0...ibb_sms-v1.2.0) (2026-10-09)
 
 
