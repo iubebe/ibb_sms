@@ -19,6 +19,7 @@ export const API_ROUTES = {
     detail: (id: string) => `/products/${encodeURIComponent(id)}`,
     image: (id: string) => `/products/${encodeURIComponent(id)}/image`,
   },
+  branch: '/branch',
   tables: {
     list: '/tables',
     detail: (id: string) => `/tables/${encodeURIComponent(id)}`,

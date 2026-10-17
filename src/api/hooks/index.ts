@@ -1,5 +1,6 @@
 export * from './use-attendance'
 export * from './use-auth'
+export * from './use-branch'
 export * from './use-categories'
 export * from './use-dashboard'
 export * from './use-finance'

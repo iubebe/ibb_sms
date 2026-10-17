@@ -461,3 +461,16 @@ export interface FinanceSummary {
   staffWithoutRate: number
   daily: FinanceDay[]
 }
+
+export interface Branch {
+  id: string
+  /** The shop name shown in the app and on receipts. */
+  name: string
+  address: string | null
+}
+
+export interface BranchInput {
+  name: string
+  /** Empty string clears the address. */
+  address?: string
+}

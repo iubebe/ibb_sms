@@ -16,6 +16,7 @@ import { OrderHistoryPage } from '@/features/orders/order-history-page'
 import { OrdersPage } from '@/features/orders/orders-page'
 import { PaymentQrPage } from '@/features/payment-qr/payment-qr-page'
 import { ProductsPage } from '@/features/products/products-page'
+import { ShopPage } from '@/features/shop/shop-page'
 import { StockPage } from '@/features/stock/stock-page'
 import { StaffPage } from '@/features/staff/staff-page'
 import { TablesPage } from '@/features/tables/tables-page'
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
           { path: 'stock', element: <StockPage /> },
           { path: 'finance', element: <FinancePage /> },
           { path: 'tables', element: <TablesPage /> },
+          { path: 'shop', element: <ShopPage /> },
         ],
       },
       {

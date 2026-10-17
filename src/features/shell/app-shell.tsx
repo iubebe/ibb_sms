@@ -1,6 +1,7 @@
 import { LogOut, Menu, Store } from "lucide-react";
 import { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
+import { useBranch } from "@/api/hooks";
 import type { UserRole } from "@/api/types";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -154,10 +155,11 @@ function SideNav({
 }
 
 function Brand() {
+  const branch = useBranch();
   return (
     <div className="flex items-center gap-2 font-semibold">
       <Store className="size-5" />
-      Iubebe SMS
+      {branch.data?.name ?? "Iubebe SMS"}
     </div>
   );
 }

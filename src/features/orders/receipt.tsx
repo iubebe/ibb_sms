@@ -1,11 +1,10 @@
 import { Printer } from 'lucide-react'
 import { createPortal } from 'react-dom'
+import { useBranch } from '@/api/hooks'
 import type { PaymentMethod, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { formatPrice } from '@/lib/format-price'
-
-const SHOP_NAME = 'Iubebe'
 
 export interface ReceiptPayment {
   method: PaymentMethod
@@ -20,11 +19,15 @@ const dateTime = new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyl
 
 /** Thermal-printer friendly bill (80mm). No `payment` = provisional bill, not yet paid. */
 export function Receipt({ order, payment }: { order: StaffOrder; payment?: ReceiptPayment }) {
+  const branch = useBranch().data
+  const shopName = branch?.name ?? 'Iubebe'
+  const address = branch?.address
   const change = payment?.method === 'cash' && payment.received ? payment.received - order.total : null
 
   return (
     <div className="mx-auto w-full max-w-[80mm] bg-white p-3 font-mono text-[12px] leading-snug text-black">
-      <p className="text-center text-base font-bold">{SHOP_NAME}</p>
+      <p className="text-center text-base font-bold">{shopName}</p>
+      {address && <p className="text-center">{address}</p>}
       <p className="text-center font-semibold">{payment ? 'HÓA ĐƠN THANH TOÁN' : 'PHIẾU TẠM TÍNH'}</p>
       <hr className="my-2 border-dashed border-black" />
       <div className="flex justify-between">

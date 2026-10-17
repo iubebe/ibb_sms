@@ -13,6 +13,7 @@ export const queryKeys = {
   products: {
     all: ['products'] as const,
   },
+  branch: ['branch'] as const,
   tables: {
     all: ['tables'] as const,
   },

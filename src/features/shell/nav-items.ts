@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   ScanFace,
   Package,
+  Store,
   QrCode,
   Users,
   Wallet,
@@ -64,4 +65,11 @@ export const NAV_ITEMS: NavItem[] = [
   { to: "/stock", label: "Kho", icon: Warehouse, roles: ["admin"] },
   { to: "/finance", label: "Tài chính", icon: Wallet, roles: ["admin"] },
   { to: "/staff", label: "Nhân sự", icon: Users, roles: ["admin"] },
+  {
+    to: "/shop",
+    label: "Cửa hàng",
+    icon: Store,
+    roles: ["admin"],
+    hiddenInNav: true,
+  },
 ];
