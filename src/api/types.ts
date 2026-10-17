@@ -32,6 +32,8 @@ export interface StaffOrderItem {
   quantity: number
   /** Units already delivered to the table (0..quantity). */
   servedQuantity: number
+  /** VND price snapshot at order time. */
+  unitPrice: number
   notes: string | null
 }
 
@@ -60,6 +62,17 @@ export interface CreateOrderStaffInput {
 }
 
 export type PaymentMethod = 'cash' | 'qr_manual'
+
+export interface PaymentQrCode {
+  id: string
+  branchId: string
+  label: string
+  /** S3 key of the image (private, fetched via GET /payment-qr-codes/:id/image). Named `imagePath` for API compatibility. */
+  imagePath: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
 
 /** Result of confirm / cancel / pay on an order. */
 export interface OrderTransition {
@@ -176,6 +189,8 @@ export interface ManagedUser {
   email: string
   role: UserRole
   isActive: boolean
+  /** VND per worked hour; `null` = not set (salary not estimated). */
+  hourlyRate: number | null
   /** Still on a temporary password. */
   mustChangePassword: boolean
   createdAt: string
@@ -189,7 +204,7 @@ export interface CreateUserInput {
   password: string
 }
 
-export type UpdateUserInput = Partial<Pick<ManagedUser, 'name' | 'email' | 'role' | 'isActive'>>
+export type UpdateUserInput = Partial<Pick<ManagedUser, 'name' | 'email' | 'role' | 'isActive' | 'hourlyRate'>>
 
 export type FaceCheckStatus = 'pending' | 'passed' | 'failed'
 /** `incomplete` = open longer than the max shift, i.e. a forgotten check-out. */
@@ -250,4 +265,212 @@ export interface AdjustAttendanceInput {
   /** ISO timestamps */
   checkInAt?: string
   checkOutAt?: string
+}
+
+export interface StaffSchedule {
+  id: string
+  branchId: string
+  assignedToUserId: string | null
+  weekStartDate: string
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  shiftType: string | null
+  position: string | null
+  /** scheduled | proposed | rejected | cancelled | no-show */
+  status: string
+  proposedByUserId: string | null
+  reviewedByUserId: string | null
+  reviewedAt: string | null
+  reviewNotes: string | null
+  /** Set on list/get endpoints. */
+  assignedToUser?: { id: string; name: string } | null
+  /** Set on the admin proposal list only. */
+  proposedByUser?: { id: string; name: string } | null
+}
+
+export interface ShiftInput {
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  shiftType?: string
+  position?: string
+}
+
+export interface CreateStaffScheduleInput {
+  weekStartDate: string
+  shifts: ShiftInput[]
+}
+
+export interface UpdateStaffScheduleInput {
+  startTime?: string
+  endTime?: string
+  shiftType?: string
+  position?: string
+  status?: string
+  assignedToUserId?: string | null
+}
+
+export interface StaffShiftRegistration {
+  id: string
+  scheduleId: string
+  staffUserId: string
+  status: string
+  adminNotes: string | null
+  reviewedAt: string | null
+  reviewedByUserId: string | null
+}
+
+export type StockItemKind = 'goods' | 'material'
+
+export interface StockItem {
+  id: string
+  name: string
+  kind: StockItemKind
+  unit: string
+  quantity: number
+  lowStockThreshold: number
+  /** `quantity <= lowStockThreshold` (never when the threshold is 0). */
+  isLow: boolean
+  /** VND per unit of the latest import. */
+  lastUnitCost: number | null
+  isActive: boolean
+}
+
+export interface StockItemInput {
+  name: string
+  kind: StockItemKind
+  unit: string
+  lowStockThreshold: number
+}
+
+export interface StockItemUpdate extends Partial<StockItemInput> {
+  isActive?: boolean
+}
+
+export interface StockMovement {
+  id: string
+  /** Positive adds stock, negative removes it. */
+  change: number
+  quantityAfter: number
+  reason: 'import' | 'adjustment'
+  receiptCode: string | null
+  note: string | null
+  createdAt: string
+  createdByName: string | null
+}
+
+export interface Supplier {
+  id: string
+  name: string
+  phone: string | null
+  note: string | null
+}
+
+export interface SupplierInput {
+  name: string
+  phone: string
+  note: string
+}
+
+export interface ImportLine {
+  stockItemId: string
+  name: string
+  unit: string
+  quantity: number
+  unitCost: number
+  lineTotal: number
+}
+
+export interface ImportReceipt {
+  id: string
+  code: string
+  importedAt: string
+  supplier: { id: string; name: string } | null
+  note: string | null
+  totalCost: number
+  createdByName: string | null
+  lines: ImportLine[]
+}
+
+export interface ImportInput {
+  supplierId?: string
+  importedAt?: string
+  note?: string
+  lines: { stockItemId: string; quantity: number; unitCost: number }[]
+}
+
+/** `ibb_shop_backend/src/modules/finance` (admin only). */
+export type ExpenseCategory = 'rent' | 'electricity' | 'water' | 'internet' | 'gas' | 'maintenance' | 'marketing' | 'other'
+
+export interface Expense {
+  id: string
+  category: ExpenseCategory
+  amount: number
+  /** `YYYY-MM-DD` */
+  incurredOn: string
+  note: string | null
+  createdByName: string | null
+  createdAt: string
+}
+
+export interface ExpenseInput {
+  category: ExpenseCategory
+  amount: number
+  incurredOn: string
+  note: string
+}
+
+export interface FinanceTotals {
+  revenue: number
+  paidOrders: number
+  /** Cash spent on stock imports (not cost of goods sold). */
+  importCost: number
+  operatingCost: number
+  /** Estimated: worked hours x hourly rate. */
+  salaryCost: number
+  totalCost: number
+  profit: number
+}
+
+export interface FinanceSalaryLine {
+  userId: string
+  name: string
+  hours: number
+  hourlyRate: number | null
+  amount: number
+}
+
+export interface FinanceDay {
+  /** `YYYY-MM-DD` */
+  date: string
+  revenue: number
+  importCost: number
+  operatingCost: number
+  salaryCost: number
+}
+
+export interface FinanceSummary {
+  from: string
+  to: string
+  totals: FinanceTotals
+  revenueByMethod: { method: PaymentMethod | null; amount: number }[]
+  expensesByCategory: { category: ExpenseCategory; amount: number }[]
+  salary: FinanceSalaryLine[]
+  /** Staff who worked in the range but have no hourly rate. */
+  staffWithoutRate: number
+  daily: FinanceDay[]
+}
+
+export interface Branch {
+  id: string
+  /** The shop name shown in the app and on receipts. */
+  name: string
+  address: string | null
+}
+
+export interface BranchInput {
+  name: string
+  /** Empty string clears the address. */
+  address?: string
 }

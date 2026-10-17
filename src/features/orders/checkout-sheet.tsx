@@ -1,12 +1,14 @@
-import { Banknote, Loader2, QrCode, TriangleAlert } from 'lucide-react'
+import { Banknote, CheckCircle2, Eye, Loader2, Printer, QrCode, TriangleAlert } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { usePayOrder } from '@/api/hooks'
+import { usePayOrder, usePaymentQrCodes } from '@/api/hooks'
+import { paymentQrImageUrl } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentMethod, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { formatPrice } from '@/lib/format-price'
+import { ReceiptDialog, type ReceiptPayment } from './receipt'
 
 const BILLS = [50_000, 100_000, 200_000, 500_000]
 
@@ -16,7 +18,7 @@ interface CheckoutSheetProps {
   onClose: () => void
 }
 
-/** Cashier checkout: pick cash (with change) or a manual QR transfer, then mark the order paid. */
+/** Staff/Cashier checkout: pick cash (with change) or a manual QR transfer, then mark the order paid. */
 export function CheckoutSheet({ order, onClose }: CheckoutSheetProps) {
   return (
     <Sheet open={order !== null} onOpenChange={(next) => !next && onClose()}>
@@ -30,25 +32,65 @@ export function CheckoutSheet({ order, onClose }: CheckoutSheetProps) {
 
 function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void }) {
   const pay = usePayOrder()
+  const { data: qrCodes } = usePaymentQrCodes()
   const [method, setMethod] = useState<PaymentMethod>('cash')
   const [received, setReceived] = useState('')
+  const [isPending, setIsPending] = useState(false)
+  const [paid, setPaid] = useState<ReceiptPayment | null>(null)
+  const [receiptOpen, setReceiptOpen] = useState(false)
 
   const receivedAmount = Number(received) || 0
   const change = receivedAmount - order.total
   const unserved = order.items.reduce((sum, i) => sum + i.quantity - i.servedQuantity, 0)
   // Offer the bills that cover the total, so the cashier taps instead of typing.
   const quickAmounts = [order.total, ...BILLS.filter((b) => b > order.total).slice(0, 3)]
-  const valid = method === 'qr_manual' || receivedAmount >= order.total
+  const isCash = method === 'cash'
+  const validCash = receivedAmount >= order.total
+  const valid = !isCash || validCash
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    pay.mutate({ orderId: order.id, paymentMethod: method }, { onSuccess: onDone })
+    if (!valid) return
+    const paymentMethod: PaymentMethod = isCash ? 'cash' : 'qr_manual'
+    setIsPending(true)
+    pay.mutate(
+      { orderId: order.id, paymentMethod },
+      {
+        onSuccess: () => {
+          // Stay open so the cashier can print the bill; the sheet closes via "Xong".
+          setPaid({ method: paymentMethod, received: isCash ? receivedAmount : undefined, paidAt: new Date() })
+          setReceiptOpen(true)
+        },
+        onSettled: () => setIsPending(false),
+      },
+    )
+  }
+
+  if (paid) {
+    return (
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <SheetHeader className="px-0">
+          <SheetTitle className="flex items-center gap-2">
+            <CheckCircle2 className="size-5" /> Đã thanh toán
+          </SheetTitle>
+          <SheetDescription>{order.tableName ?? 'Không có bàn'}</SheetDescription>
+        </SheetHeader>
+        <p className="text-3xl font-semibold tabular-nums">{formatPrice(order.total)}</p>
+        <Button type="button" className="min-h-12 w-full text-base" onClick={() => setReceiptOpen(true)}>
+          <Printer /> In hóa đơn
+        </Button>
+        <Button type="button" variant="outline" className="min-h-12 w-full text-base" onClick={onDone}>
+          Xong
+        </Button>
+        <ReceiptDialog order={order} payment={paid} open={receiptOpen} onOpenChange={setReceiptOpen} />
+      </div>
+    )
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
+      className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
     >
       <SheetHeader className="px-0">
         <SheetTitle>Thanh toán · {order.tableName ?? 'Không có bàn'}</SheetTitle>
@@ -85,7 +127,7 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
         </Button>
       </div>
 
-      {method === 'cash' ? (
+      {isCash ? (
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="received">Khách đưa (₫)</Label>
@@ -123,9 +165,27 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
           )}
         </div>
       ) : (
-        <p className="rounded-lg border p-3 text-sm">
-          Kiểm tra tiền đã về tài khoản đủ <strong>{formatPrice(order.total)}</strong> rồi mới xác nhận.
-        </p>
+        <div className="flex flex-col gap-3">
+          {qrCodes && qrCodes.length > 0 ? (
+            <>
+              <div className="flex flex-col gap-2">
+                {qrCodes.map((qr) => (
+                  <div key={qr.id} className="flex flex-col items-center gap-2 rounded-lg border p-3">
+                    <img src={paymentQrImageUrl(qr.id)} alt={qr.label} className="h-48 w-48 object-contain" />
+                    <p className="text-sm font-medium">{qr.label}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-sm text-muted-foreground">
+                Thanh toán <strong>{formatPrice(order.total)}</strong> rồi nhấn xác nhận.
+              </p>
+            </>
+          ) : (
+            <p className="rounded-lg border p-3 text-center text-sm text-muted-foreground">
+              Chưa có mã QR thanh toán. Liên hệ quản lý để thiết lập.
+            </p>
+          )}
+        </div>
       )}
 
       {pay.isError && (
@@ -134,10 +194,14 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
         </p>
       )}
 
-      <Button type="submit" className="min-h-12 w-full text-base" disabled={!valid || pay.isPending}>
-        {pay.isPending && <Loader2 className="animate-spin" />}
-        Xác nhận đã thanh toán
+      <Button type="submit" className="min-h-12 w-full text-base" disabled={!valid || pay.isPending || isPending}>
+        {(pay.isPending || isPending) && <Loader2 className="animate-spin" />}
+        {isCash ? 'Xác nhận thanh toán tiền mặt' : 'Khách đã thanh toán'}
       </Button>
+      <Button type="button" variant="outline" className="min-h-12 w-full text-base" onClick={() => setReceiptOpen(true)}>
+        <Eye /> Xem hóa đơn
+      </Button>
+      <ReceiptDialog order={order} open={receiptOpen} onOpenChange={setReceiptOpen} />
     </form>
   )
 }

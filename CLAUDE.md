@@ -2,7 +2,7 @@
 
 Shop Management System (alias `ibb_shop_sms`): dashboard, product management, HR face-ID check-in, order reception. Used on **phones first** (staff walking the floor), and on tablet/desktop in the back office. Mobile is the primary target; larger screens enlarge the layout.
 
-Stack: React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui (`base-nova`), Zustand, TanStack Query. Alias `@/` -> `src/`. Package manager: pnpm.
+Stack: React 19, Vite, TypeScript, Tailwind CSS v4, shadcn/ui, Zustand, TanStack Query. Alias `@/` -> `src/`. Package manager: pnpm.
 
 Styling, touch/UX, Tailwind/shadcn, code-structure and reuse rules are the same as `ibb_shop_guest/CLAUDE.md`; read it and follow it. Differences for this app:
 

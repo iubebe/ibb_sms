@@ -19,11 +19,26 @@ export const API_ROUTES = {
     detail: (id: string) => `/products/${encodeURIComponent(id)}`,
     image: (id: string) => `/products/${encodeURIComponent(id)}/image`,
   },
+  branch: '/branch',
   tables: {
     list: '/tables',
     detail: (id: string) => `/tables/${encodeURIComponent(id)}`,
     regenerateQr: (id: string) => `/tables/${encodeURIComponent(id)}/regenerate-qr`,
     qrPdf: '/tables/qr-pdf',
+  },
+  finance: {
+    summary: '/finance/summary',
+    expenses: '/finance/expenses',
+    expense: (id: string) => `/finance/expenses/${encodeURIComponent(id)}`,
+  },
+  stock: {
+    items: '/stock/items',
+    item: (id: string) => `/stock/items/${encodeURIComponent(id)}`,
+    adjust: (id: string) => `/stock/items/${encodeURIComponent(id)}/adjust`,
+    movements: (id: string) => `/stock/items/${encodeURIComponent(id)}/movements`,
+    suppliers: '/stock/suppliers',
+    supplier: (id: string) => `/stock/suppliers/${encodeURIComponent(id)}`,
+    imports: '/stock/imports',
   },
   users: {
     list: '/users',
@@ -42,11 +57,42 @@ export const API_ROUTES = {
   },
   orders: {
     list: '/orders',
+    history: '/orders/history',
     create: '/orders',
     confirm: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/confirm`,
     cancel: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/cancel`,
     pay: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/pay`,
     served: (orderId: string, itemId: string) =>
       `/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(itemId)}/served`,
+    paymentQrCodes: '/orders/payment-qr-codes',
+  },
+  staffSchedules: {
+    list: (weekStartDate: string) => `/staff-schedules?weekStartDate=${encodeURIComponent(weekStartDate)}`,
+    create: '/staff-schedules',
+    detail: (id: string) => `/staff-schedules/${encodeURIComponent(id)}`,
+    update: (id: string) => `/staff-schedules/${encodeURIComponent(id)}`,
+    cancel: (id: string) => `/staff-schedules/${encodeURIComponent(id)}/cancel`,
+    register: (id: string) => `/staff-schedules/${encodeURIComponent(id)}/register`,
+    registrationsByWeek: (weekStartDate: string) =>
+      `/staff-schedules/registrations/by-week/${encodeURIComponent(weekStartDate)}`,
+    myRegistrations: (weekStartDate: string) =>
+      `/staff-schedules/my-registrations/${encodeURIComponent(weekStartDate)}`,
+    approveRegistration: (id: string) => `/staff-schedules/registrations/${encodeURIComponent(id)}/approve`,
+    rejectRegistration: (id: string) => `/staff-schedules/registrations/${encodeURIComponent(id)}/reject`,
+    proposals: '/staff-schedules/proposals',
+    myProposals: (weekStartDate: string) =>
+      `/staff-schedules/proposals/mine/${encodeURIComponent(weekStartDate)}`,
+    proposalsByWeek: (weekStartDate: string) =>
+      `/staff-schedules/proposals/by-week/${encodeURIComponent(weekStartDate)}`,
+    approveProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/approve`,
+    rejectProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/reject`,
+    cancelProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/cancel`,
+  },
+  paymentQrCodes: {
+    list: '/payment-qr-codes',
+    create: '/payment-qr-codes',
+    update: (id: string) => `/payment-qr-codes/${encodeURIComponent(id)}`,
+    image: (id: string) => `/payment-qr-codes/${encodeURIComponent(id)}/image`,
+    remove: (id: string) => `/payment-qr-codes/${encodeURIComponent(id)}`,
   },
 } as const

@@ -38,6 +38,8 @@ function useInvalidateUsers() {
     Promise.all([
       queryClient.invalidateQueries({ queryKey: queryKeys.users.all }),
       queryClient.invalidateQueries({ queryKey: queryKeys.attendance.all }),
+      // Hourly rate changes the salary estimate.
+      queryClient.invalidateQueries({ queryKey: queryKeys.finance.all }),
     ])
 }
 
