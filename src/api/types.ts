@@ -316,3 +316,82 @@ export interface StaffShiftRegistration {
   reviewedAt: string | null
   reviewedByUserId: string | null
 }
+
+export type StockItemKind = 'goods' | 'material'
+
+export interface StockItem {
+  id: string
+  name: string
+  kind: StockItemKind
+  unit: string
+  quantity: number
+  lowStockThreshold: number
+  /** `quantity <= lowStockThreshold` (never when the threshold is 0). */
+  isLow: boolean
+  /** VND per unit of the latest import. */
+  lastUnitCost: number | null
+  isActive: boolean
+}
+
+export interface StockItemInput {
+  name: string
+  kind: StockItemKind
+  unit: string
+  lowStockThreshold: number
+}
+
+export interface StockItemUpdate extends Partial<StockItemInput> {
+  isActive?: boolean
+}
+
+export interface StockMovement {
+  id: string
+  /** Positive adds stock, negative removes it. */
+  change: number
+  quantityAfter: number
+  reason: 'import' | 'adjustment'
+  receiptCode: string | null
+  note: string | null
+  createdAt: string
+  createdByName: string | null
+}
+
+export interface Supplier {
+  id: string
+  name: string
+  phone: string | null
+  note: string | null
+}
+
+export interface SupplierInput {
+  name: string
+  phone: string
+  note: string
+}
+
+export interface ImportLine {
+  stockItemId: string
+  name: string
+  unit: string
+  quantity: number
+  unitCost: number
+  lineTotal: number
+}
+
+export interface ImportReceipt {
+  id: string
+  code: string
+  importedAt: string
+  supplier: { id: string; name: string } | null
+  note: string | null
+  totalCost: number
+  createdByName: string | null
+  lines: ImportLine[]
+}
+
+export interface ImportInput {
+  supplierId?: string
+  importedAt?: string
+  note?: string
+  lines: { stockItemId: string; quantity: number; unitCost: number }[]
+}

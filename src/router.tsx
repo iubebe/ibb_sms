@@ -15,6 +15,7 @@ import { OrderHistoryPage } from '@/features/orders/order-history-page'
 import { OrdersPage } from '@/features/orders/orders-page'
 import { PaymentQrPage } from '@/features/payment-qr/payment-qr-page'
 import { ProductsPage } from '@/features/products/products-page'
+import { StockPage } from '@/features/stock/stock-page'
 import { StaffPage } from '@/features/staff/staff-page'
 import { TablesPage } from '@/features/tables/tables-page'
 import { StaffRegistrationPage } from '@/features/staff-schedules/staff-registration-page'
@@ -44,6 +45,7 @@ export const router = createBrowserRouter([
           { path: 'products', element: <ProductsPage /> },
           { path: 'payment-qr', element: <PaymentQrPage /> },
           { path: 'staff', element: <StaffPage /> },
+          { path: 'stock', element: <StockPage /> },
           { path: 'tables', element: <TablesPage /> },
         ],
       },

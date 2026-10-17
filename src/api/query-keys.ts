@@ -19,6 +19,13 @@ export const queryKeys = {
   paymentQrCodes: {
     all: ['paymentQrCodes'] as const,
   },
+  stock: {
+    items: ['stock', 'items'] as const,
+    movements: (itemId: string) => ['stock', 'movements', itemId] as const,
+    suppliers: ['stock', 'suppliers'] as const,
+    imports: (from: string, to: string) => ['stock', 'imports', from, to] as const,
+    allImports: ['stock', 'imports'] as const,
+  },
   users: {
     all: ['users'] as const,
   },

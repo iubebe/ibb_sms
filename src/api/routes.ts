@@ -25,6 +25,15 @@ export const API_ROUTES = {
     regenerateQr: (id: string) => `/tables/${encodeURIComponent(id)}/regenerate-qr`,
     qrPdf: '/tables/qr-pdf',
   },
+  stock: {
+    items: '/stock/items',
+    item: (id: string) => `/stock/items/${encodeURIComponent(id)}`,
+    adjust: (id: string) => `/stock/items/${encodeURIComponent(id)}/adjust`,
+    movements: (id: string) => `/stock/items/${encodeURIComponent(id)}/movements`,
+    suppliers: '/stock/suppliers',
+    supplier: (id: string) => `/stock/suppliers/${encodeURIComponent(id)}`,
+    imports: '/stock/imports',
+  },
   users: {
     list: '/users',
     detail: (id: string) => `/users/${encodeURIComponent(id)}`,
