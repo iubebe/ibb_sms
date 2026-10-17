@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Switch } from '@/components/ui/switch'
+import { parseDecimal } from '@/features/stock/stock-labels'
 import { generatePassword } from './generate-password'
 import { ROLE_LABEL, ROLE_OPTIONS } from './role-labels'
 
@@ -40,15 +41,18 @@ function UserForm({ user, onDone }: { user: ManagedUser | null; onDone: () => vo
   const [email, setEmail] = useState(user?.email ?? '')
   const [role, setRole] = useState<UserRole>(user?.role ?? 'staff')
   const [isActive, setIsActive] = useState(user?.isActive ?? true)
+  const [hourlyRate, setHourlyRate] = useState(user?.hourlyRate != null ? String(user.hourlyRate) : '')
   const [password, setPassword] = useState(() => (user ? '' : generatePassword()))
 
-  const valid = name.trim() !== '' && email.trim() !== '' && (user !== null || password.length >= 10)
+  const rate = parseDecimal(hourlyRate)
+  const rateValid = hourlyRate.trim() === '' || (rate !== null && rate >= 0)
+  const valid = rateValid && name.trim() !== '' && email.trim() !== '' && (user !== null || password.length >= 10)
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
     const base = { name: name.trim(), email: email.trim() }
     if (user) {
-      update.mutate({ id: user.id, input: { ...base, role, isActive } }, { onSuccess: onDone })
+      update.mutate({ id: user.id, input: { ...base, role, isActive, hourlyRate: rate } }, { onSuccess: onDone })
     } else {
       create.mutate({ ...base, role, password }, { onSuccess: onDone })
     }
@@ -106,6 +110,23 @@ function UserForm({ user, onDone }: { user: ManagedUser | null; onDone: () => vo
         </div>
         {isSelf && <p className="text-xs text-muted-foreground">Bạn không thể đổi vai trò của chính mình.</p>}
       </div>
+
+      {user && role !== 'admin' && (
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="user-rate">Lương theo giờ (₫)</Label>
+          <Input
+            id="user-rate"
+            inputMode="decimal"
+            autoComplete="off"
+            placeholder="Ví dụ 25000"
+            className="h-11 text-base"
+            value={hourlyRate}
+            onChange={(e) => setHourlyRate(e.target.value)}
+            aria-invalid={!rateValid}
+          />
+          <p className="text-xs text-muted-foreground">Dùng để ước tính tiền lương ở mục Tài chính. Để trống nếu chưa đặt.</p>
+        </div>
+      )}
 
       {!user && (
         <div className="flex flex-col gap-2">

@@ -2,10 +2,16 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { CreateOrderStaffInput, OrderStatus, OrderTransition, PaymentMethod, ServedItem, StaffOrder } from '@/api/types'
+import type { CreateOrderStaffInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
 
 export async function getOrders(status?: OrderStatus) {
   const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.list, { params: { status } })
+  return data
+}
+
+/** Admin: every order created in `[from, to)` (ISO timestamps). */
+export async function getOrderHistory(from: string, to: string) {
+  const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.history, { params: { from, to } })
   return data
 }
 
@@ -44,6 +50,14 @@ export function useOrders(status?: OrderStatus) {
     queryFn: () => getOrders(status),
     staleTime: 5_000,
     refetchInterval: 15_000,
+  })
+}
+
+export function useOrderHistory(from: string, to: string) {
+  return useQuery({
+    queryKey: queryKeys.orders.history(from, to),
+    queryFn: () => getOrderHistory(from, to),
+    staleTime: 30_000,
   })
 }
 
@@ -89,5 +103,12 @@ export function useCreateOrder() {
   return useMutation({
     mutationFn: createOrderForStaff,
     onSettled: refresh,
+  })
+}
+
+export function usePaymentQrCodes() {
+  return useQuery({
+    queryKey: queryKeys.orders.paymentQrCodes,
+    queryFn: () => apiClient.get<PaymentQrCode[]>(API_ROUTES.orders.paymentQrCodes).then(r => r.data),
   })
 }

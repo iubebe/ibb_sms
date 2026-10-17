@@ -128,3 +128,17 @@
     @apply font-sans;
     }
 }
+
+/* Receipt printing: show only #receipt-print, sized for an 80mm thermal roll. */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+  body > *:not(#receipt-print) {
+    display: none !important;
+  }
+  #receipt-print {
+    display: block !important;
+  }
+}
