@@ -32,6 +32,8 @@ export interface StaffOrderItem {
   quantity: number
   /** Units already delivered to the table (0..quantity). */
   servedQuantity: number
+  /** VND price snapshot at order time. */
+  unitPrice: number
   notes: string | null
 }
 
