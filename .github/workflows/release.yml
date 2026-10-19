@@ -34,15 +34,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.release-please.outputs.tag_name }}
-      # Vite bakes the API URLs into the bundle, so the image is per environment.
-      # Set both as repository variables (Settings > Secrets and variables > Actions > Variables).
-      - name: Require API URLs
-        env:
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-          VITE_WS_URL: ${{ vars.VITE_WS_URL }}
-        run: |
-          test -n "$VITE_API_URL" || { echo "::error::repo variable VITE_API_URL is not set"; exit 1; }
-          test -n "$VITE_WS_URL" || { echo "::error::repo variable VITE_WS_URL is not set"; exit 1; }
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -52,9 +43,6 @@ jobs:
         with:
           context: .
           push: true
-          build-args: |
-            VITE_API_URL=${{ vars.VITE_API_URL }}
-            VITE_WS_URL=${{ vars.VITE_WS_URL }}
           tags: |
             ghcr.io/${{ github.repository }}:${{ needs.release-please.outputs.version }}
             ghcr.io/${{ github.repository }}:latest
