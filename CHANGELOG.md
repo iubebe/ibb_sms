@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.4.0...ibb_sms-v1.5.0) (2026-10-19)
+
+
+### Features
+
+* adjust for staff ([67a4f3f](https://github.com/iubebe/ibb_sms/commit/67a4f3f0263e9a94b85e1593af890089678baa66))
+* public branch name ([fdf01d9](https://github.com/iubebe/ibb_sms/commit/fdf01d9a2ddcc3211f1156ad687c75e34ab14468))
+* staff import stock ([3e04f5f](https://github.com/iubebe/ibb_sms/commit/3e04f5f722ebfe2c648e8765120719411d725f0c))
+
+
+### Bug Fixes
+
+* adjust order history and attendance for staff ([29fa86f](https://github.com/iubebe/ibb_sms/commit/29fa86fccc0778a475055d9f91581d9548f38ede))
+
 ## [1.4.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.3.0...ibb_sms-v1.4.0) (2026-10-19)
 
 
