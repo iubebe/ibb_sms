@@ -1,10 +1,11 @@
 /// <reference types="vite/client" />
 
-interface ImportMetaEnv {
-  readonly VITE_API_URL: string
-  readonly VITE_WS_URL: string
+// Raw strings from /assets/environment/env.js (see public/assets/environment/env.template.js).
+interface RawRuntimeEnv {
+  readonly API_BASE_URL?: string
+  readonly WS_URL?: string
 }
 
-interface ImportMeta {
-  readonly env: ImportMetaEnv
+interface Window {
+  env?: RawRuntimeEnv
 }
