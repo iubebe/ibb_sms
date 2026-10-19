@@ -1,6 +1,6 @@
 import { Loader2, Store } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { useLogin } from '@/api/hooks'
+import { useLogin, usePublicBranchName } from '@/api/hooks'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 
 export function LoginPage() {
   const login = useLogin()
+  const shopName = usePublicBranchName().data ?? 'Iubebe SMS'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -22,7 +23,7 @@ export function LoginPage() {
         <CardHeader>
           <div className="mb-2 flex items-center gap-2 font-semibold">
             <Store className="size-5" />
-            Iubebe SMS
+            {shopName}
           </div>
           <CardTitle className="text-xl">Đăng nhập</CardTitle>
           <CardDescription>Dùng tài khoản nhân viên của cửa hàng.</CardDescription>

@@ -9,6 +9,7 @@ export const API_ROUTES = {
     me: '/auth/me',
     changePassword: '/auth/change-password',
   },
+  publicBranch: '/branch/public',
   dashboard: '/dashboard',
   categories: {
     list: '/categories',
@@ -39,6 +40,13 @@ export const API_ROUTES = {
     suppliers: '/stock/suppliers',
     supplier: (id: string) => `/stock/suppliers/${encodeURIComponent(id)}`,
     imports: '/stock/imports',
+    itemOptions: '/stock/items/options',
+    importsMine: '/stock/imports/mine',
+    importDrafts: '/stock/imports/drafts',
+    import: (id: string) => `/stock/imports/${encodeURIComponent(id)}`,
+    importImage: (id: string) => `/stock/imports/${encodeURIComponent(id)}/image`,
+    importConfirm: (id: string) => `/stock/imports/${encodeURIComponent(id)}/confirm`,
+    importReject: (id: string) => `/stock/imports/${encodeURIComponent(id)}/reject`,
   },
   users: {
     list: '/users',
