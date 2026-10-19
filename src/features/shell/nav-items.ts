@@ -45,7 +45,7 @@ export const NAV_ITEMS: NavItem[] = [
     to: "/orders/history",
     label: "Lịch sử đơn",
     icon: History,
-    roles: ["admin"],
+    roles: ["admin", "staff"],
     hiddenInNav: true,
   },
   {

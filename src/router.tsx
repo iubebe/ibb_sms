@@ -38,12 +38,14 @@ export const router = createBrowserRouter([
       { path: 'orders', element: <OrdersPage /> },
       {
         element: <RoleRoute roles={['admin', 'staff']} />,
-        children: [{ path: 'orders/create', element: <CreateOrderPage /> }],
+        children: [
+          { path: 'orders/create', element: <CreateOrderPage /> },
+          { path: 'orders/history', element: <OrderHistoryPage /> },
+        ],
       },
       {
         element: <RoleRoute roles={['admin']} />,
         children: [
-          { path: 'orders/history', element: <OrderHistoryPage /> },
           { path: 'products', element: <ProductsPage /> },
           { path: 'payment-qr', element: <PaymentQrPage /> },
           { path: 'staff', element: <StaffPage /> },

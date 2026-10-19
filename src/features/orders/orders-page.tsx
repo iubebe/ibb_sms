@@ -66,7 +66,7 @@ export function OrdersPage() {
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-xl font-semibold">Đơn hàng</h2>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
+          {canManage && (
             <Button
               variant="outline"
               className="min-h-9"
