@@ -14,6 +14,7 @@ export const queryKeys = {
     all: ['products'] as const,
   },
   branch: ['branch'] as const,
+  publicBranch: ['branch', 'public'] as const,
   tables: {
     all: ['tables'] as const,
   },

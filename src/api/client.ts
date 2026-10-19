@@ -42,7 +42,7 @@ function loadCsrfToken() {
 }
 
 apiClient.interceptors.request.use(async (config) => {
-  if (!SAFE_METHODS.has((config.method ?? 'get').toLowerCase())) {
+  if (!SAFE_METHODS.has((config.method ?? 'get').toLowerCase()) || config.url === API_ROUTES.publicBranch) {
     config.headers.set(CSRF_HEADER, await loadCsrfToken())
   }
   return config

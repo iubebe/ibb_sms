@@ -19,10 +19,23 @@ export function useBranch() {
   return useQuery({ queryKey: queryKeys.branch, queryFn: getBranch, staleTime: 10 * 60_000 })
 }
 
+/** Shop name without a session, for the login page and the tab title. */
+export function usePublicBranchName() {
+  return useQuery({
+    queryKey: queryKeys.publicBranch,
+    queryFn: async () => (await apiClient.get<{ name: string }>(API_ROUTES.publicBranch)).data.name,
+    staleTime: 10 * 60_000,
+  })
+}
+
 export function useUpdateBranch() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: updateBranch,
-    onSuccess: (branch) => queryClient.setQueryData(queryKeys.branch, branch),
+    onSuccess: (branch) => {
+      queryClient.setQueryData(queryKeys.branch, branch)
+      // Refresh the tab title and login page name.
+      void queryClient.invalidateQueries({ queryKey: queryKeys.publicBranch })
+    },
   })
 }

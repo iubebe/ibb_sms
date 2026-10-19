@@ -9,6 +9,7 @@ export const API_ROUTES = {
     me: '/auth/me',
     changePassword: '/auth/change-password',
   },
+  publicBranch: '/branch/public',
   dashboard: '/dashboard',
   categories: {
     list: '/categories',
