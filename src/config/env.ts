@@ -1,4 +1,10 @@
+// The only reader of window.env, which is filled by /assets/environment/env.js at runtime.
+const raw = (key: keyof RawRuntimeEnv): string | undefined => {
+  const value = window.env?.[key]
+  return value === undefined || value === '' ? undefined : value
+}
+
 export const env = {
-  apiUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api',
-  wsUrl: import.meta.env.VITE_WS_URL ?? 'http://localhost:3000',
+  apiUrl: raw('API_BASE_URL') ?? 'http://localhost:3000/api',
+  wsUrl: raw('WS_URL') ?? 'http://localhost:3000',
 } as const
