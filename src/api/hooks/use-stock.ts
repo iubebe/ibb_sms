@@ -1,10 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
+import { env } from '@/config/env'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
 import type {
+  ImportDraftInput,
   ImportInput,
   ImportReceipt,
+  StockItemOption,
   StockItem,
   StockItemInput,
   StockItemUpdate,
@@ -69,6 +72,94 @@ export async function getImports(from: string, to: string) {
 export async function createImport(input: ImportInput) {
   const { data } = await apiClient.post<ImportReceipt>(API_ROUTES.stock.imports, input)
   return data
+}
+
+/** Authenticated image endpoint; the cookie authorizes the `<img>` request. */
+export function importImageUrl(id: string): string {
+  return `${env.apiUrl}${API_ROUTES.stock.importImage(id)}`
+}
+
+export async function getStockItemOptions() {
+  const { data } = await apiClient.get<StockItemOption[]>(API_ROUTES.stock.itemOptions)
+  return data
+}
+
+export async function getMyImports() {
+  const { data } = await apiClient.get<ImportReceipt[]>(API_ROUTES.stock.importsMine)
+  return data
+}
+
+/** Multipart: `image`, `lines` (JSON string), optional `supplierId`/`note`. Does not change stock. */
+export async function createImportDraft(input: ImportDraftInput) {
+  const body = new FormData()
+  body.append('image', input.image, 'import.jpg')
+  body.append('lines', JSON.stringify(input.lines))
+  if (input.supplierId) body.append('supplierId', input.supplierId)
+  if (input.note) body.append('note', input.note)
+  const { data } = await apiClient.post<ImportReceipt>(API_ROUTES.stock.importDrafts, body, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 30_000,
+  })
+  return data
+}
+
+export async function cancelImportDraft(id: string) {
+  await apiClient.delete(API_ROUTES.stock.import(id))
+}
+
+export async function confirmImport(id: string, lines?: ImportInput['lines']) {
+  const { data } = await apiClient.post<ImportReceipt>(API_ROUTES.stock.importConfirm(id), lines ? { lines } : {})
+  return data
+}
+
+export async function rejectImport(id: string, reason: string) {
+  const { data } = await apiClient.post<ImportReceipt>(API_ROUTES.stock.importReject(id), { reason })
+  return data
+}
+
+export function useStockItemOptions() {
+  return useQuery({ queryKey: queryKeys.stock.itemOptions, queryFn: getStockItemOptions })
+}
+
+export function useMyImports() {
+  return useQuery({ queryKey: queryKeys.stock.myImports, queryFn: getMyImports })
+}
+
+export function useCreateImportDraft() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: createImportDraft,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['stock', 'imports'] }),
+  })
+}
+
+export function useCancelImportDraft() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: cancelImportDraft,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['stock', 'imports'] }),
+  })
+}
+
+/** Confirming adds stock, so everything under `stock` and the finance summary go stale. */
+export function useConfirmImport() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (v: { id: string; lines?: ImportInput['lines'] }) => confirmImport(v.id, v.lines),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['stock'] }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.finance.all }),
+      ]),
+  })
+}
+
+export function useRejectImport() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (v: { id: string; reason: string }) => rejectImport(v.id, v.reason),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['stock', 'imports'] }),
+  })
 }
 
 export function useStockItems() {

@@ -382,6 +382,9 @@ export interface ImportLine {
   lineTotal: number
 }
 
+/** `pending` = staff draft waiting for an admin; only `confirmed` receipts changed stock. */
+export type ImportStatus = 'pending' | 'confirmed' | 'rejected'
+
 export interface ImportReceipt {
   id: string
   code: string
@@ -390,7 +393,27 @@ export interface ImportReceipt {
   note: string | null
   totalCost: number
   createdByName: string | null
+  createdByUserId: string | null
+  status: ImportStatus
+  /** Photo of the invoice/goods, fetched via `importImageUrl(id)`. */
+  hasImage: boolean
+  rejectReason: string | null
   lines: ImportLine[]
+}
+
+/** Stock item as staff see it when drafting: no quantities or costs. */
+export interface StockItemOption {
+  id: string
+  name: string
+  kind: StockItemKind
+  unit: string
+}
+
+export interface ImportDraftInput {
+  supplierId?: string
+  note?: string
+  lines: { stockItemId: string; quantity: number; unitCost: number }[]
+  image: Blob
 }
 
 export interface ImportInput {

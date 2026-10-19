@@ -31,6 +31,8 @@ export const queryKeys = {
     suppliers: ['stock', 'suppliers'] as const,
     imports: (from: string, to: string) => ['stock', 'imports', from, to] as const,
     allImports: ['stock', 'imports'] as const,
+    itemOptions: ['stock', 'item-options'] as const,
+    myImports: ['stock', 'imports', 'mine'] as const,
   },
   users: {
     all: ['users'] as const,
