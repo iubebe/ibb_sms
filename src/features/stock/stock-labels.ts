@@ -1,4 +1,4 @@
-import type { StockItemKind } from '@/api/types'
+import type { ImportStatus, StockItemKind } from '@/api/types'
 
 export const STOCK_KIND_LABEL: Record<StockItemKind, string> = {
   goods: 'Hàng hóa',
@@ -16,4 +16,16 @@ export function parseDecimal(text: string) {
   if (!trimmed) return null
   const value = Number(trimmed)
   return Number.isFinite(value) ? value : null
+}
+
+export const IMPORT_STATUS_LABEL: Record<ImportStatus, string> = {
+  pending: 'Chờ duyệt',
+  confirmed: 'Đã xác nhận',
+  rejected: 'Bị từ chối',
+}
+
+export const IMPORT_STATUS_VARIANT: Record<ImportStatus, 'default' | 'secondary' | 'destructive'> = {
+  pending: 'secondary',
+  confirmed: 'default',
+  rejected: 'destructive',
 }

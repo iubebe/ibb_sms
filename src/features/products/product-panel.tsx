@@ -190,7 +190,7 @@ function FilterChip({ active, onClick, children }: { active: boolean; onClick: (
   )
 }
 
-function Thumb({ product }: { product: Product }) {
+export function Thumb({ product }: { product: Product }) {
   return product.imageUrl ? (
     <img
       src={product.imageUrl}

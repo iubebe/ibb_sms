@@ -1,7 +1,7 @@
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
-import { useOrderHistory } from "@/api/hooks";
+import { useMe, useOrderHistory } from "@/api/hooks";
 import type { StaffOrder } from "@/api/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,8 +41,10 @@ function addDays(date: Date, delta: number) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + delta);
 }
 
-/** Admin: review orders of a day or a range of days, picked from a calendar. */
+/** Admin/staff: review orders of a day or a range of days, picked from a calendar. */
 export function OrderHistoryPage() {
+  const { data: me } = useMe();
+  const showRevenue = me?.role === "admin";
   const [range, setRange] = useState<{ start: Date; end: Date }>(() => {
     const today = startOfDay(new Date());
     return { start: today, end: today };
@@ -158,9 +160,9 @@ export function OrderHistoryPage() {
         </SheetContent>
       </Sheet>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className={showRevenue ? "grid grid-cols-3 gap-2" : "grid grid-cols-2 gap-2"}>
         <Stat label="Số đơn" value={String(orders.length)} />
-        <Stat label="Doanh thu" value={formatPrice(revenue)} />
+        {showRevenue && <Stat label="Doanh thu" value={formatPrice(revenue)} />}
         <Stat label="Đã hủy" value={String(cancelled)} />
       </div>
 

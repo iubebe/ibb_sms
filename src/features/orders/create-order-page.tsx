@@ -6,6 +6,7 @@ import { useTables } from "@/api/hooks/use-tables";
 import { useProducts } from "@/api/hooks/use-products";
 import type { CreateOrderItemInput, DiningTable, Product } from "@/api/types";
 import { Button } from "@/components/ui/button";
+import { Thumb } from "@/features/products/product-panel";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Sheet,
@@ -222,6 +223,7 @@ export function CreateOrderPage() {
                     key={product.id}
                     className="flex items-center justify-between gap-2 rounded-lg border bg-card p-3 text-card-foreground"
                   >
+                    <Thumb product={product} />
                     <div className="min-w-0 flex-1">
                       <p className="wrap-break-words font-medium">{product.name}</p>
                       <p className="text-sm text-muted-foreground">

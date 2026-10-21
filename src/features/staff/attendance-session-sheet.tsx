@@ -1,9 +1,10 @@
-import { ImageOff, Loader2 } from 'lucide-react'
+import { CalendarDays, ImageOff, Loader2 } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { attendancePhotoUrl, useAdjustAttendance } from '@/api/hooks'
 import type { AttendanceRecord, AttendancePhotoKind, FaceCheckStatus } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -55,7 +56,7 @@ function SessionDetail({ record, onDone }: { record: AttendanceRecord; onDone: (
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <div className="mx-auto flex w-full max-w-lg flex-col gap-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <SheetHeader className="px-0">
         <SheetTitle>{record.userName ?? 'Ca làm việc'}</SheetTitle>
         <SheetDescription>
@@ -79,17 +80,16 @@ function SessionDetail({ record, onDone }: { record: AttendanceRecord; onDone: (
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
         <div className="flex flex-col gap-2">
           <Label htmlFor="adjust-in">Giờ check-in</Label>
-          <Input id="adjust-in" type="datetime-local" required className="h-11 text-base" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
+          <DateTimeField id="adjust-in" title="Chọn giờ check-in" value={checkIn} onChange={setCheckIn} />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="adjust-out">Giờ check-out</Label>
-          <Input
+          <DateTimeField
             id="adjust-out"
-            type="datetime-local"
-            required={record.checkOutAt !== null}
-            className="h-11 text-base"
+            title="Chọn giờ check-out"
             value={checkOut}
-            onChange={(e) => setCheckOut(e.target.value)}
+            onChange={setCheckOut}
+            defaultMonth={new Date(record.checkInAt)}
           />
           {record.status === 'incomplete' && (
             <p className="text-xs text-muted-foreground">Ca này quên check-out. Nhập giờ ra thực tế để tính giờ công.</p>
@@ -106,6 +106,71 @@ function SessionDetail({ record, onDone }: { record: AttendanceRecord; onDone: (
         </Button>
       </form>
     </div>
+  )
+}
+
+const pad = (n: number) => String(n).padStart(2, '0')
+
+/** Calendar + time picker in a bottom sheet. `value` is `YYYY-MM-DDTHH:mm` (local), or '' when unset. */
+function DateTimeField({
+  id,
+  title,
+  value,
+  onChange,
+  defaultMonth,
+}: {
+  id: string
+  title: string
+  value: string
+  onChange: (value: string) => void
+  defaultMonth?: Date
+}) {
+  const [open, setOpen] = useState(false)
+  const date = value ? new Date(value) : undefined
+  const timePart = value ? value.slice(11, 16) : '08:00'
+
+  function pickDay(day: Date | undefined) {
+    if (day) onChange(`${day.getFullYear()}-${pad(day.getMonth() + 1)}-${pad(day.getDate())}T${timePart}`)
+  }
+
+  function pickTime(next: string) {
+    if (!next) return
+    const base = date ?? new Date()
+    onChange(`${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(base.getDate())}T${next}`)
+  }
+
+  return (
+    <>
+      <Button id={id} type="button" variant="outline" className="min-h-11 justify-start text-base font-normal" onClick={() => setOpen(true)}>
+        <CalendarDays />
+        {value ? formatDateTime(fromLocalInput(value)) : 'Chọn ngày giờ'}
+      </Button>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="bottom" className="flex flex-col items-center pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <SheetHeader>
+            <SheetTitle>{title}</SheetTitle>
+            <SheetDescription className="sr-only">Chọn ngày và giờ</SheetDescription>
+          </SheetHeader>
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={pickDay}
+            defaultMonth={date ?? defaultMonth}
+            disabled={{ after: new Date() }}
+          />
+          <Input
+            type="time"
+            aria-label="Giờ"
+            className="h-11 w-40 text-center text-base"
+            value={timePart}
+            onChange={(e) => pickTime(e.target.value)}
+          />
+          <Button type="button" className="min-h-11 w-full" disabled={!value} onClick={() => setOpen(false)}>
+            Xong
+          </Button>
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }
 
@@ -126,7 +191,7 @@ function Photo({
 
   return (
     <figure className="flex flex-col gap-1">
-      <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg border bg-muted text-muted-foreground">
+      <div className="flex aspect-4/3 items-center justify-center overflow-hidden rounded-lg border bg-muted text-muted-foreground">
         {present && !failed ? (
           <img
             src={attendancePhotoUrl(recordId, kind)}
@@ -138,7 +203,7 @@ function Photo({
           <ImageOff className="size-6" aria-label="Không có ảnh" />
         )}
       </div>
-      <figcaption className="flex items-center justify-between gap-1 text-xs">
+      <figcaption className="flex flex-col items-center justify-between gap-1 text-xs">
         <span>{label}</span>
         {present && <Badge variant={face === 'failed' ? 'destructive' : 'secondary'}>{FACE_LABEL[face]}</Badge>}
       </figcaption>
