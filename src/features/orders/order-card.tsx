@@ -15,9 +15,10 @@ interface OrderCardProps {
   canCheckout: boolean
   onCancel: (order: StaffOrder) => void
   onCheckout: (order: StaffOrder) => void
+  onAddItems: (order: StaffOrder) => void
 }
 
-export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout }: OrderCardProps) {
+export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout, onAddItems }: OrderCardProps) {
   const confirm = useConfirmOrder()
   const isPending = order.status === 'pending_confirmation'
   const isConfirmed = order.status === 'confirmed'
@@ -64,6 +65,12 @@ export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout 
           <Button className="min-h-11 flex-1" disabled={confirm.isPending} onClick={() => confirm.mutate(order.id)}>
             {confirm.isPending ? <Loader2 className="animate-spin" /> : <Check />}
             Xác nhận
+          </Button>
+        )}
+        {canManage && (isPending || isConfirmed) && (
+          <Button variant="outline" className="min-h-11 flex-1" onClick={() => onAddItems(order)}>
+            <Plus />
+            Thêm món
           </Button>
         )}
         {canCheckout && isConfirmed && (

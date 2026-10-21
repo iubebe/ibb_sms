@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { CreateOrderStaffInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
+import type { AddOrderItemsInput, CreateOrderStaffInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
 
 export async function getOrders(status?: OrderStatus) {
   const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.list, { params: { status } })
@@ -25,6 +25,11 @@ export async function setItemServed(orderId: string, itemId: string, servedQuant
   const { data } = await apiClient.patch<ServedItem>(API_ROUTES.orders.served(orderId, itemId), {
     servedQuantity,
   })
+  return data
+}
+
+export async function addOrderItems(orderId: string, input: AddOrderItemsInput) {
+  const { data } = await apiClient.post<StaffOrder>(API_ROUTES.orders.addItems(orderId), input)
   return data
 }
 
@@ -74,6 +79,14 @@ function useRefreshAfterOrderChange() {
 export function useConfirmOrder() {
   const refresh = useRefreshAfterOrderChange()
   return useMutation({ mutationFn: confirmOrder, onSettled: refresh })
+}
+
+export function useAddOrderItems() {
+  const refresh = useRefreshAfterOrderChange()
+  return useMutation({
+    mutationFn: (v: { orderId: string; input: AddOrderItemsInput }) => addOrderItems(v.orderId, v.input),
+    onSettled: refresh,
+  })
 }
 
 export function useCancelOrder() {

@@ -61,6 +61,10 @@ export interface CreateOrderStaffInput {
   items: CreateOrderItemInput[]
 }
 
+export interface AddOrderItemsInput {
+  items: CreateOrderItemInput[]
+}
+
 export type PaymentMethod = 'cash' | 'qr_manual'
 
 export interface PaymentQrCode {
