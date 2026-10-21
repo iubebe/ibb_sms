@@ -2,13 +2,21 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { Customer, CustomerInput } from '@/api/types'
+import type { Customer, CustomerInput, CustomerLookup } from '@/api/types'
 
 export async function getCustomers(search: string) {
   const { data } = await apiClient.get<Customer[]>(API_ROUTES.customers.list, {
     params: { search: search || undefined },
   })
   return data
+}
+
+/** Exact match on phone; `null` when no customer has it. */
+export async function lookupCustomerByPhone(phone: string) {
+  const { data } = await apiClient.get<{ customer: CustomerLookup | null }>(API_ROUTES.customers.lookup, {
+    params: { phone },
+  })
+  return data.customer
 }
 
 export async function updateCustomer(id: string, input: CustomerInput) {
@@ -23,6 +31,11 @@ export async function deleteCustomer(id: string) {
 /** Admin only. `search` matches name, phone or address on the server. */
 export function useCustomers(search: string) {
   return useQuery({ queryKey: queryKeys.customers.list(search), queryFn: () => getCustomers(search) })
+}
+
+/** On demand (a mutation, not a query): runs only when staff press "Tìm". */
+export function useLookupCustomer() {
+  return useMutation({ mutationFn: lookupCustomerByPhone })
 }
 
 function useInvalidateCustomers() {

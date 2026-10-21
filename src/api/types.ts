@@ -87,6 +87,14 @@ export interface Customer {
   createdAt: string
 }
 
+/** Result of an exact phone lookup (admin, staff); used to pre-fill the create-order form. */
+export interface CustomerLookup {
+  id: string
+  name: string | null
+  phone: string | null
+  address: string | null
+}
+
 export interface CustomerInput {
   name: string | null
   phone: string | null

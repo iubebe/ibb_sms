@@ -1,7 +1,7 @@
-import { Minus, Plus, Repeat, ShoppingCart } from "lucide-react";
+import { Loader2, Minus, Plus, Repeat, Search, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useCreateOrder } from "@/api/hooks";
+import { useCreateOrder, useLookupCustomer } from "@/api/hooks";
 import { useTables } from "@/api/hooks/use-tables";
 import { useProducts } from "@/api/hooks/use-products";
 import type { CreateOrderItemInput, DiningTable, Product } from "@/api/types";
@@ -34,6 +34,7 @@ export function CreateOrderPage() {
   const tables = useTables();
   const products = useProducts();
   const createOrder = useCreateOrder();
+  const lookup = useLookupCustomer();
 
   const [pickedTable, setPickedTable] = useState<DiningTable | null>(null);
   const [choosingTable, setChoosingTable] = useState(false);
@@ -86,6 +87,26 @@ export function CreateOrderPage() {
       (sum, item) => sum + item.product.price * item.quantity,
       0,
     );
+  }
+
+  /** Pre-fills name/phone/address from an existing customer; all fields stay editable. */
+  function findCustomer() {
+    lookup.mutate(customer.phone, {
+      onSuccess: (found) => {
+        if (found) {
+          setCustomer({
+            name: found.name ?? "",
+            phone: found.phone ?? customer.phone,
+            address: found.address ?? "",
+          });
+        }
+      },
+    });
+  }
+
+  function changeCustomer(values: CustomerFormValues) {
+    if (values.phone !== customer.phone) lookup.reset();
+    setCustomer(values);
   }
 
   async function handleSubmit() {
@@ -346,7 +367,39 @@ export function CreateOrderPage() {
 
                 <div className="flex flex-col gap-3 border-t pt-3">
                   <p className="text-sm font-medium">Thông tin khách hàng (không bắt buộc)</p>
-                  <CustomerFields idPrefix="create-order" values={customer} onChange={setCustomer} />
+                  <CustomerFields
+                    idPrefix="create-order"
+                    values={customer}
+                    onChange={changeCustomer}
+                    phoneAction={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="min-h-11 shrink-0"
+                        disabled={
+                          lookup.isPending ||
+                          !customer.phone.trim() ||
+                          !isValidPhone(customer.phone)
+                        }
+                        onClick={findCustomer}
+                      >
+                        {lookup.isPending ? <Loader2 className="animate-spin" /> : <Search />}
+                        Tìm
+                      </Button>
+                    }
+                  />
+                  {lookup.isSuccess && (
+                    <p className="text-xs text-muted-foreground">
+                      {lookup.data
+                        ? "Đã điền thông tin khách cũ. Bạn vẫn có thể sửa."
+                        : "Chưa có khách với số này, sẽ tạo khách mới khi tạo đơn."}
+                    </p>
+                  )}
+                  {lookup.isError && (
+                    <p role="alert" className="text-xs text-destructive">
+                      {lookup.error.message}
+                    </p>
+                  )}
                 </div>
               </div>
 

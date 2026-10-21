@@ -23,6 +23,7 @@ export const API_ROUTES = {
   branch: '/branch',
   customers: {
     list: '/customers',
+    lookup: '/customers/lookup',
     detail: (id: string) => `/customers/${encodeURIComponent(id)}`,
   },
   tables: {
