@@ -8,6 +8,7 @@ import {
   RoleRoute,
 } from '@/features/auth/route-guards'
 import { CheckInPage } from '@/features/check-in/check-in-page'
+import { CustomersPage } from '@/features/customers/customers-page'
 import { DashboardPage } from '@/features/dashboard/dashboard-page'
 import { PageNotFound } from '@/features/errors/page-not-found'
 import { CreateOrderPage } from '@/features/orders/create-order-page'
@@ -18,6 +19,7 @@ import { OrdersPage } from '@/features/orders/orders-page'
 import { PaymentQrPage } from '@/features/payment-qr/payment-qr-page'
 import { ProductsPage } from '@/features/products/products-page'
 import { ShopPage } from '@/features/shop/shop-page'
+import { WriteOffsPage } from '@/features/stock/write-offs-page'
 import { StockPage } from '@/features/stock/stock-page'
 import { StaffPage } from '@/features/staff/staff-page'
 import { TablesPage } from '@/features/tables/tables-page'
@@ -53,6 +55,7 @@ export const router = createBrowserRouter([
           { path: 'stock', element: <StockPage /> },
           { path: 'finance', element: <FinancePage /> },
           { path: 'tables', element: <TablesPage /> },
+          { path: 'customers', element: <CustomersPage /> },
           { path: 'shop', element: <ShopPage /> },
         ],
       },
@@ -61,6 +64,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'schedules/register', element: <StaffRegistrationPage /> },
           { path: 'stock/drafts', element: <ImportDraftsPage /> },
+          { path: 'stock/write-offs', element: <WriteOffsPage /> },
         ],
       },
       {

@@ -54,6 +54,15 @@ function Overview({ data, month }: { data: FinanceSummary; month: string }) {
           valueClassName={profitable ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}
           className="col-span-2 md:col-span-1"
         />
+        {totals.writeOffLoss > 0 && (
+          <Tile
+            label="Hao hụt / hủy hàng"
+            value={formatPrice(totals.writeOffLoss)}
+            hint="Hàng hỏng, hết hạn đã hủy; đã nằm trong tiền nhập hàng nên không cộng thêm vào tổng chi"
+            valueClassName="text-destructive"
+            className="col-span-2 md:col-span-3"
+          />
+        )}
       </div>
 
       {data.staffWithoutRate > 0 && (

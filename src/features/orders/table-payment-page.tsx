@@ -26,6 +26,7 @@ export function TablePaymentPage() {
     canManage: false,
     canCheckout: true,
     onCancel: () => {},
+    onAddItems: () => {},
     onCheckout: setCheckoutTarget,
   }
 

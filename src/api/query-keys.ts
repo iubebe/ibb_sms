@@ -18,6 +18,10 @@ export const queryKeys = {
   tables: {
     all: ['tables'] as const,
   },
+  customers: {
+    all: ['customers'] as const,
+    list: (search: string) => ['customers', 'list', search] as const,
+  },
   paymentQrCodes: {
     all: ['paymentQrCodes'] as const,
   },
@@ -34,6 +38,10 @@ export const queryKeys = {
     allImports: ['stock', 'imports'] as const,
     itemOptions: ['stock', 'item-options'] as const,
     myImports: ['stock', 'imports', 'mine'] as const,
+    writeOffs: (from: string, to: string) => ['stock', 'write-offs', 'range', from, to] as const,
+    writeOffsPending: ['stock', 'write-offs', 'pending'] as const,
+    writeOffsMine: ['stock', 'write-offs', 'mine'] as const,
+    atRisk: ['stock', 'write-offs', 'at-risk'] as const,
   },
   users: {
     all: ['users'] as const,

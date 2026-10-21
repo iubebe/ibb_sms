@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AddItemsSheet } from "./add-items-sheet";
 import { CancelOrderDialog } from "./cancel-order-dialog";
 import { CheckoutSheet } from "./checkout-sheet";
 import { OrderCard } from "./order-card";
@@ -34,6 +35,7 @@ export function OrdersPage() {
 
   const [cancelTarget, setCancelTarget] = useState<StaffOrder | null>(null);
   const [checkoutTarget, setCheckoutTarget] = useState<StaffOrder | null>(null);
+  const [addItemsTarget, setAddItemsTarget] = useState<StaffOrder | null>(null);
   const defaultTab =
     (location.state as any)?.defaultTab ??
     (canManage ? "pending_confirmation" : "confirmed");
@@ -47,6 +49,7 @@ export function OrdersPage() {
     canCheckout,
     onCancel: setCancelTarget,
     onCheckout: setCheckoutTarget,
+    onAddItems: setAddItemsTarget,
   };
 
   const getTabLabel = (tabValue: string, count?: number) => {
@@ -161,6 +164,10 @@ export function OrdersPage() {
         order={checkoutTarget}
         onClose={() => setCheckoutTarget(null)}
       />
+      <AddItemsSheet
+        order={addItemsTarget}
+        onClose={() => setAddItemsTarget(null)}
+      />
     </section>
   );
 }
@@ -177,6 +184,7 @@ interface OrderListProps {
   canCheckout: boolean;
   onCancel: (order: StaffOrder) => void;
   onCheckout: (order: StaffOrder) => void;
+  onAddItems: (order: StaffOrder) => void;
 }
 
 function OrderList({ query, status, ...cardProps }: OrderListProps) {

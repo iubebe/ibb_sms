@@ -19,6 +19,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { TimePicker } from "@/components/ui/time-picker";
 import { getDayName } from "@/lib/date-utils";
 
 const MAX_SHIFTS = 10;
@@ -174,28 +175,20 @@ function ProposeShiftForm({
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
                 <Label htmlFor={`start-${row.key}`}>Bắt đầu</Label>
-                <Input
+                <TimePicker
                   id={`start-${row.key}`}
-                  type="time"
-                  required
-                  className="h-11 text-base"
+                  title="Giờ bắt đầu"
                   value={row.startTime}
-                  onChange={(e) =>
-                    updateRow(row.key, { startTime: e.target.value })
-                  }
+                  onChange={(startTime) => updateRow(row.key, { startTime })}
                 />
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor={`end-${row.key}`}>Kết thúc</Label>
-                <Input
+                <TimePicker
                   id={`end-${row.key}`}
-                  type="time"
-                  required
-                  className="h-11 text-base"
+                  title="Giờ kết thúc"
                   value={row.endTime}
-                  onChange={(e) =>
-                    updateRow(row.key, { endTime: e.target.value })
-                  }
+                  onChange={(endTime) => updateRow(row.key, { endTime })}
                 />
               </div>
             </div>

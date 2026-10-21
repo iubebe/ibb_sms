@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { CreateOrderStaffInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
+import type { AddOrderItemsInput, CreateOrderStaffInput, OrderCustomerInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
 
 export async function getOrders(status?: OrderStatus) {
   const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.list, { params: { status } })
@@ -25,6 +25,16 @@ export async function setItemServed(orderId: string, itemId: string, servedQuant
   const { data } = await apiClient.patch<ServedItem>(API_ROUTES.orders.served(orderId, itemId), {
     servedQuantity,
   })
+  return data
+}
+
+export async function addOrderItems(orderId: string, input: AddOrderItemsInput) {
+  const { data } = await apiClient.post<StaffOrder>(API_ROUTES.orders.addItems(orderId), input)
+  return data
+}
+
+export async function updateOrderCustomer(orderId: string, input: OrderCustomerInput) {
+  const { data } = await apiClient.patch<StaffOrder>(API_ROUTES.orders.customer(orderId), input)
   return data
 }
 
@@ -76,6 +86,25 @@ export function useConfirmOrder() {
   return useMutation({ mutationFn: confirmOrder, onSettled: refresh })
 }
 
+export function useAddOrderItems() {
+  const refresh = useRefreshAfterOrderChange()
+  return useMutation({
+    mutationFn: (v: { orderId: string; input: AddOrderItemsInput }) => addOrderItems(v.orderId, v.input),
+    onSettled: refresh,
+  })
+}
+
+/** Also refreshes the customer list: the edit can create or relink a customer. */
+export function useUpdateOrderCustomer() {
+  const queryClient = useQueryClient()
+  const refresh = useRefreshAfterOrderChange()
+  return useMutation({
+    mutationFn: (v: { orderId: string; input: OrderCustomerInput }) => updateOrderCustomer(v.orderId, v.input),
+    onSettled: () =>
+      Promise.all([refresh(), queryClient.invalidateQueries({ queryKey: queryKeys.customers.all })]),
+  })
+}
+
 export function useCancelOrder() {
   const refresh = useRefreshAfterOrderChange()
   return useMutation({ mutationFn: cancelOrder, onSettled: refresh })
@@ -99,10 +128,12 @@ export function useSetServed() {
 }
 
 export function useCreateOrder() {
+  const queryClient = useQueryClient()
   const refresh = useRefreshAfterOrderChange()
   return useMutation({
     mutationFn: createOrderForStaff,
-    onSettled: refresh,
+    onSettled: () =>
+      Promise.all([refresh(), queryClient.invalidateQueries({ queryKey: queryKeys.customers.all })]),
   })
 }
 
