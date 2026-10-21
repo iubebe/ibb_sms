@@ -25,23 +25,36 @@ export interface NavItem {
   /** Hidden for other roles; omitted = every role. */
   roles?: UserRole[];
   hiddenInNav?: boolean;
+  /** Pinned to the mobile bottom bar (the sheet menu and sidebar list everything). */
+  bottom?: boolean;
+  /** Label for the narrow bottom bar tab; falls back to `label`. */
+  shortLabel?: string;
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { to: "/", label: "Tổng quan", icon: LayoutDashboard },
-  { to: "/orders", label: "Đơn hàng", icon: ClipboardList },
-  { to: "/products", label: "Sản phẩm", icon: Package, roles: ["admin"] },
+  { to: "/", label: "Tổng quan", icon: LayoutDashboard, bottom: true },
+  { to: "/orders", label: "Đơn hàng", icon: ClipboardList, bottom: true },
+  {
+    to: "/products",
+    label: "Sản phẩm",
+    icon: Package,
+    roles: ["admin"],
+    bottom: true,
+  },
   {
     to: "/check-in",
     label: "Chấm công",
     icon: ScanFace,
     roles: ["staff", "cashier"],
+    bottom: true,
   },
   {
     to: "/schedules/register",
     label: "Đăng ký ca làm",
     icon: Calendar,
     roles: ["staff"],
+    bottom: true,
+    shortLabel: "Ca làm",
   },
   {
     to: "/orders/history",
@@ -70,7 +83,13 @@ export const NAV_ITEMS: NavItem[] = [
     roles: ["admin"],
     hiddenInNav: true,
   },
-  { to: "/stock", label: "Kho", icon: Warehouse, roles: ["admin"] },
+  {
+    to: "/stock",
+    label: "Kho",
+    icon: Warehouse,
+    roles: ["admin"],
+    bottom: true,
+  },
   { to: "/stock/drafts", label: "Nhập hàng", icon: Warehouse, roles: ["staff"] },
   { to: "/stock/write-offs", label: "Hủy hàng", icon: Trash2, roles: ["staff"] },
   { to: "/finance", label: "Tài chính", icon: Wallet, roles: ["admin"] },
@@ -83,3 +102,6 @@ export const NAV_ITEMS: NavItem[] = [
     hiddenInNav: true,
   },
 ];
+
+/** Roles that can create orders; they get the centre shortcut on the bottom bar. */
+export const CREATE_ORDER_ROLES: UserRole[] = ["admin", "staff"];
