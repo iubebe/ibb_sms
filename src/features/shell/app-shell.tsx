@@ -1,4 +1,4 @@
-import { LogOut, Menu, Store } from "lucide-react";
+import { LogOut, Menu, Plus, Store } from "lucide-react";
 import { useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import { useBranch } from "@/api/hooks";
@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { NAV_ITEMS, type NavItem } from "./nav-items";
+import { CREATE_ORDER_ROLES, NAV_ITEMS, type NavItem } from "./nav-items";
 
 interface AppShellProps {
   userName: string;
@@ -32,7 +32,12 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
     (item) => !item.roles || item.roles.includes(role),
   );
 
-  const navBottomItems = navItems.filter((item) => item.hiddenInNav !== true);
+  const navBottomItems = navItems.filter((item) => item.bottom);
+  const canCreateOrder = CREATE_ORDER_ROLES.includes(role);
+  // Split around the centre shortcut so it sits in the middle of the bar.
+  const half = canCreateOrder ? Math.ceil(navBottomItems.length / 2) : navBottomItems.length;
+  const bottomLeft = navBottomItems.slice(0, half);
+  const bottomRight = navBottomItems.slice(half);
   const title = navItems.find((item) => isActive(item.to, pathname))?.label;
 
   return (
@@ -92,27 +97,52 @@ export function AppShell({ userName, role, onLogout }: AppShellProps) {
           aria-label="Điều hướng chính"
           className="fixed inset-x-0 bottom-0 z-10 flex border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
         >
-          {navBottomItems.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === "/"}
-              className={({ isActive }) =>
-                cn(
-                  "flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs transition-colors active:bg-muted",
-                  isActive
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground",
-                )
-              }
-            >
-              <Icon className="size-5" />
-              {label}
-            </NavLink>
+          {bottomLeft.map((item) => (
+            <BottomTab key={item.to} item={item} />
+          ))}
+          {canCreateOrder && <CreateOrderTab />}
+          {bottomRight.map((item) => (
+            <BottomTab key={item.to} item={item} />
           ))}
         </nav>
       </div>
     </div>
+  );
+}
+
+function BottomTab({ item }: { item: NavItem }) {
+  const { to, label, shortLabel, icon: Icon } = item;
+  return (
+    <NavLink
+      to={to}
+      // /orders/create has its own centre tab
+      end={to === "/" || to === "/orders"}
+      className={({ isActive }) =>
+        cn(
+          "flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-xs transition-colors active:bg-muted",
+          isActive ? "font-medium text-foreground" : "text-muted-foreground",
+        )
+      }
+    >
+      <Icon className="size-5" />
+      <span className="max-w-full truncate px-1">{shortLabel ?? label}</span>
+    </NavLink>
+  );
+}
+
+/** Most-used action: a raised round button in the middle of the bottom bar. */
+function CreateOrderTab() {
+  return (
+    <NavLink
+      to="/orders/create"
+      aria-label="Tạo đơn"
+      className="flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium text-foreground"
+    >
+      <span className="-mt-6 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg ring-4 ring-background transition-transform active:scale-95">
+        <Plus className="size-7" />
+      </span>
+      Tạo đơn
+    </NavLink>
   );
 }
 
