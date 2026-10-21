@@ -34,6 +34,10 @@ export const queryKeys = {
     allImports: ['stock', 'imports'] as const,
     itemOptions: ['stock', 'item-options'] as const,
     myImports: ['stock', 'imports', 'mine'] as const,
+    writeOffs: (from: string, to: string) => ['stock', 'write-offs', 'range', from, to] as const,
+    writeOffsPending: ['stock', 'write-offs', 'pending'] as const,
+    writeOffsMine: ['stock', 'write-offs', 'mine'] as const,
+    atRisk: ['stock', 'write-offs', 'at-risk'] as const,
   },
   users: {
     all: ['users'] as const,

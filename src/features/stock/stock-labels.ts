@@ -1,4 +1,4 @@
-import type { ImportStatus, StockItemKind } from '@/api/types'
+import type { ImportStatus, StockItemKind, WriteOffCause, WriteOffStatus } from '@/api/types'
 
 export const STOCK_KIND_LABEL: Record<StockItemKind, string> = {
   goods: 'Hàng hóa',
@@ -25,6 +25,25 @@ export const IMPORT_STATUS_LABEL: Record<ImportStatus, string> = {
 }
 
 export const IMPORT_STATUS_VARIANT: Record<ImportStatus, 'default' | 'secondary' | 'destructive'> = {
+  pending: 'secondary',
+  confirmed: 'default',
+  rejected: 'destructive',
+}
+
+export const WRITE_OFF_CAUSE_LABEL: Record<WriteOffCause, string> = {
+  expired: 'Hết hạn',
+  spoiled: 'Hư hỏng',
+  damaged: 'Đổ vỡ',
+  other: 'Khác',
+}
+
+export const WRITE_OFF_STATUS_LABEL: Record<WriteOffStatus, string> = {
+  pending: 'Chờ duyệt',
+  confirmed: 'Đã hủy hàng',
+  rejected: 'Bị từ chối',
+}
+
+export const WRITE_OFF_STATUS_VARIANT: Record<WriteOffStatus, 'default' | 'secondary' | 'destructive'> = {
   pending: 'secondary',
   confirmed: 'default',
   rejected: 'destructive',

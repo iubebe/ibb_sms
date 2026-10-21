@@ -18,6 +18,7 @@ import { OrdersPage } from '@/features/orders/orders-page'
 import { PaymentQrPage } from '@/features/payment-qr/payment-qr-page'
 import { ProductsPage } from '@/features/products/products-page'
 import { ShopPage } from '@/features/shop/shop-page'
+import { WriteOffsPage } from '@/features/stock/write-offs-page'
 import { StockPage } from '@/features/stock/stock-page'
 import { StaffPage } from '@/features/staff/staff-page'
 import { TablesPage } from '@/features/tables/tables-page'
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'schedules/register', element: <StaffRegistrationPage /> },
           { path: 'stock/drafts', element: <ImportDraftsPage /> },
+          { path: 'stock/write-offs', element: <WriteOffsPage /> },
         ],
       },
       {
