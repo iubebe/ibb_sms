@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.6.0...ibb_sms-v1.6.1) (2026-10-21)
+
+
+### Bug Fixes
+
+* adjust app bar ([f7e063f](https://github.com/iubebe/ibb_sms/commit/f7e063f204e8e82018ab6fad6bacc2b761bf6d8d))
+
 ## [1.6.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.5.0...ibb_sms-v1.6.0) (2026-10-21)
 
 
