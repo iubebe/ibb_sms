@@ -13,6 +13,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { OrderCustomerLine } from "@/features/customers/order-customer-line";
 import { ORDER_STATUS_LABEL } from "@/features/dashboard/order-status";
 import { formatPrice } from "@/lib/format-price";
 import { formatTime } from "@/lib/format-time";
@@ -226,6 +227,7 @@ function HistoryCard({ order, showDate }: { order: StaffOrder; showDate: boolean
           {ORDER_STATUS_LABEL[order.status]}
         </Badge>
       </div>
+      <OrderCustomerLine order={order} />
       <ul className="flex flex-col gap-1 text-sm">
         {order.items.map((item) => (
           <li key={item.id} className="flex justify-between gap-2">

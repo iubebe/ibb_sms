@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   ScanFace,
   Package,
+  Contact,
   Store,
   QrCode,
   Trash2,
@@ -55,6 +56,12 @@ export const NAV_ITEMS: NavItem[] = [
     icon: QrCode,
     roles: ["admin"],
     hiddenInNav: true,
+  },
+  {
+    to: "/customers",
+    label: "Khách hàng",
+    icon: Contact,
+    roles: ["admin"],
   },
   {
     to: "/payment-qr",

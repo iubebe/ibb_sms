@@ -8,6 +8,7 @@ import {
   RoleRoute,
 } from '@/features/auth/route-guards'
 import { CheckInPage } from '@/features/check-in/check-in-page'
+import { CustomersPage } from '@/features/customers/customers-page'
 import { DashboardPage } from '@/features/dashboard/dashboard-page'
 import { PageNotFound } from '@/features/errors/page-not-found'
 import { CreateOrderPage } from '@/features/orders/create-order-page'
@@ -54,6 +55,7 @@ export const router = createBrowserRouter([
           { path: 'stock', element: <StockPage /> },
           { path: 'finance', element: <FinancePage /> },
           { path: 'tables', element: <TablesPage /> },
+          { path: 'customers', element: <CustomersPage /> },
           { path: 'shop', element: <ShopPage /> },
         ],
       },

@@ -42,6 +42,11 @@ export interface StaffOrder {
   status: OrderStatus
   tableId: string | null
   tableName: string | null
+  /** Optional customer info entered on the order. */
+  customerId: string | null
+  customerName: string | null
+  customerPhone: string | null
+  customerAddress: string | null
   /** VND */
   total: number
   /** ISO timestamp */
@@ -56,9 +61,36 @@ export interface CreateOrderItemInput {
   notes?: string
 }
 
-export interface CreateOrderStaffInput {
+/** Optional customer fields; on edit, `null` clears a field and a missing one is left alone. */
+export interface OrderCustomerInput {
+  customerName?: string | null
+  customerPhone?: string | null
+  customerAddress?: string | null
+}
+
+export interface CreateOrderStaffInput extends OrderCustomerInput {
   tableId: string
   items: CreateOrderItemInput[]
+}
+
+/** `ibb_shop_backend/src/modules/customers` (admin only). Created by orders, not by hand. */
+export interface Customer {
+  id: string
+  name: string | null
+  phone: string | null
+  address: string | null
+  /** Orders linked to the customer, cancelled ones excluded. */
+  orderCount: number
+  /** VND, paid orders only. */
+  totalSpent: number
+  lastOrderAt: string | null
+  createdAt: string
+}
+
+export interface CustomerInput {
+  name: string | null
+  phone: string | null
+  address: string | null
 }
 
 export interface AddOrderItemsInput {

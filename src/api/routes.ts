@@ -21,6 +21,10 @@ export const API_ROUTES = {
     image: (id: string) => `/products/${encodeURIComponent(id)}/image`,
   },
   branch: '/branch',
+  customers: {
+    list: '/customers',
+    detail: (id: string) => `/customers/${encodeURIComponent(id)}`,
+  },
   tables: {
     list: '/tables',
     detail: (id: string) => `/tables/${encodeURIComponent(id)}`,
@@ -75,6 +79,7 @@ export const API_ROUTES = {
     list: '/orders',
     history: '/orders/history',
     create: '/orders',
+    customer: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/customer`,
     addItems: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/items`,
     confirm: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/confirm`,
     cancel: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/cancel`,

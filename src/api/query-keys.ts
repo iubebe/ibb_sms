@@ -18,6 +18,10 @@ export const queryKeys = {
   tables: {
     all: ['tables'] as const,
   },
+  customers: {
+    all: ['customers'] as const,
+    list: (search: string) => ['customers', 'list', search] as const,
+  },
   paymentQrCodes: {
     all: ['paymentQrCodes'] as const,
   },
