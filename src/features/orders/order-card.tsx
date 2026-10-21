@@ -1,10 +1,13 @@
-import { Check, Loader2, Minus, Plus } from 'lucide-react'
+import { Check, Loader2, Minus, Pencil, Plus } from 'lucide-react'
+import { useState } from 'react'
 import { useConfirmOrder, useSetServed } from '@/api/hooks'
 import type { StaffOrder, StaffOrderItem } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatPrice } from '@/lib/format-price'
 import { formatTime, formatTimeAgo } from '@/lib/format-time'
+import { EditOrderCustomerSheet } from '@/features/customers/edit-order-customer-sheet'
+import { OrderCustomerLine } from '@/features/customers/order-customer-line'
 import { ORDER_STATUS_LABEL } from '@/features/dashboard/order-status'
 
 interface OrderCardProps {
@@ -15,12 +18,15 @@ interface OrderCardProps {
   canCheckout: boolean
   onCancel: (order: StaffOrder) => void
   onCheckout: (order: StaffOrder) => void
+  onAddItems: (order: StaffOrder) => void
 }
 
-export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout }: OrderCardProps) {
+export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout, onAddItems }: OrderCardProps) {
   const confirm = useConfirmOrder()
+  const [editingCustomer, setEditingCustomer] = useState(false)
   const isPending = order.status === 'pending_confirmation'
   const isConfirmed = order.status === 'confirmed'
+  const hasCustomer = !!(order.customerName || order.customerPhone || order.customerAddress)
   const unserved = order.items.reduce((sum, i) => sum + i.quantity - i.servedQuantity, 0)
 
   return (
@@ -33,6 +39,23 @@ export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout 
           </p>
         </div>
         <Badge variant={isPending ? 'default' : 'secondary'}>{ORDER_STATUS_LABEL[order.status]}</Badge>
+      </div>
+
+      <div className="flex items-start gap-1">
+        <div className="min-w-0 flex-1">
+          <OrderCustomerLine order={order} />
+        </div>
+        {canManage && (isPending || isConfirmed) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="min-h-11 shrink-0"
+            onClick={() => setEditingCustomer(true)}
+          >
+            <Pencil />
+            {hasCustomer ? 'Sửa khách' : 'Thêm khách'}
+          </Button>
+        )}
       </div>
 
       <ul className="flex flex-col gap-2">
@@ -66,12 +89,20 @@ export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout 
             Xác nhận
           </Button>
         )}
+        {canManage && (isPending || isConfirmed) && (
+          <Button variant="outline" className="min-h-11 flex-1" onClick={() => onAddItems(order)}>
+            <Plus />
+            Thêm món
+          </Button>
+        )}
         {canCheckout && isConfirmed && (
           <Button className="min-h-11 flex-1" onClick={() => onCheckout(order)}>
             Thanh toán
           </Button>
         )}
       </div>
+
+      <EditOrderCustomerSheet order={order} open={editingCustomer} onClose={() => setEditingCustomer(false)} />
     </li>
   )
 }

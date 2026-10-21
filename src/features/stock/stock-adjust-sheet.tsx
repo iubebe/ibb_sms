@@ -119,7 +119,11 @@ function AdjustForm({ item, onDone }: { item: StockItem; onDone: () => void }) {
             <li key={m.id} className="flex items-center gap-3 p-3 text-sm">
               <div className="min-w-0 flex-1">
                 <p className="truncate">
-                  {m.reason === 'import' ? `Nhập hàng ${m.receiptCode ?? ''}` : `Điều chỉnh${m.note ? `: ${m.note}` : ''}`}
+                  {m.reason === 'import'
+                    ? `Nhập hàng ${m.receiptCode ?? ''}`
+                    : m.reason === 'write_off'
+                      ? `Hủy hàng${m.note ? `: ${m.note}` : ''}`
+                      : `Điều chỉnh${m.note ? `: ${m.note}` : ''}`}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {formatDateTime(m.createdAt)}

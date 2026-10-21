@@ -42,6 +42,11 @@ export interface StaffOrder {
   status: OrderStatus
   tableId: string | null
   tableName: string | null
+  /** Optional customer info entered on the order. */
+  customerId: string | null
+  customerName: string | null
+  customerPhone: string | null
+  customerAddress: string | null
   /** VND */
   total: number
   /** ISO timestamp */
@@ -56,8 +61,47 @@ export interface CreateOrderItemInput {
   notes?: string
 }
 
-export interface CreateOrderStaffInput {
+/** Optional customer fields; on edit, `null` clears a field and a missing one is left alone. */
+export interface OrderCustomerInput {
+  customerName?: string | null
+  customerPhone?: string | null
+  customerAddress?: string | null
+}
+
+export interface CreateOrderStaffInput extends OrderCustomerInput {
   tableId: string
+  items: CreateOrderItemInput[]
+}
+
+/** `ibb_shop_backend/src/modules/customers` (admin only). Created by orders, not by hand. */
+export interface Customer {
+  id: string
+  name: string | null
+  phone: string | null
+  address: string | null
+  /** Orders linked to the customer, cancelled ones excluded. */
+  orderCount: number
+  /** VND, paid orders only. */
+  totalSpent: number
+  lastOrderAt: string | null
+  createdAt: string
+}
+
+/** Result of an exact phone lookup (admin, staff); used to pre-fill the create-order form. */
+export interface CustomerLookup {
+  id: string
+  name: string | null
+  phone: string | null
+  address: string | null
+}
+
+export interface CustomerInput {
+  name: string | null
+  phone: string | null
+  address: string | null
+}
+
+export interface AddOrderItemsInput {
   items: CreateOrderItemInput[]
 }
 
@@ -334,6 +378,8 @@ export interface StockItem {
   isLow: boolean
   /** VND per unit of the latest import. */
   lastUnitCost: number | null
+  /** Days the stock stays good after the latest import; null = unknown. */
+  shelfLifeDays: number | null
   isActive: boolean
 }
 
@@ -342,6 +388,8 @@ export interface StockItemInput {
   kind: StockItemKind
   unit: string
   lowStockThreshold: number
+  /** `null` clears it. */
+  shelfLifeDays: number | null
 }
 
 export interface StockItemUpdate extends Partial<StockItemInput> {
@@ -353,7 +401,7 @@ export interface StockMovement {
   /** Positive adds stock, negative removes it. */
   change: number
   quantityAfter: number
-  reason: 'import' | 'adjustment'
+  reason: 'import' | 'adjustment' | 'write_off'
   receiptCode: string | null
   note: string | null
   createdAt: string
@@ -399,6 +447,55 @@ export interface ImportReceipt {
   hasImage: boolean
   rejectReason: string | null
   lines: ImportLine[]
+}
+
+export type WriteOffCause = 'expired' | 'spoiled' | 'damaged' | 'other'
+
+/** `pending` = staff proposal waiting for an admin; only `confirmed` write-offs removed stock. */
+export type WriteOffStatus = 'pending' | 'confirmed' | 'rejected'
+
+export interface WriteOff {
+  id: string
+  stockItem: { id: string; name: string; unit: string }
+  quantity: number
+  cause: WriteOffCause
+  note: string | null
+  status: WriteOffStatus
+  /** `null` for staff: costs are admin-only. */
+  unitCost: number | null
+  totalCost: number | null
+  writtenOffAt: string | null
+  rejectReason: string | null
+  createdByName: string | null
+  createdByUserId: string | null
+  createdAt: string
+}
+
+export interface WriteOffInput {
+  stockItemId: string
+  quantity: number
+  cause: WriteOffCause
+  note?: string
+}
+
+/** Stock on hand that is expired, near expiry or not moving (admin only). */
+export interface AtRiskItem {
+  id: string
+  name: string
+  kind: StockItemKind
+  unit: string
+  quantity: number
+  lastUnitCost: number | null
+  /** `quantity * lastUnitCost` at cost. */
+  value: number
+  shelfLifeDays: number | null
+  lastImportedAt: string | null
+  lastOutflowAt: string | null
+  estimatedExpiryAt: string | null
+  expired: boolean
+  expiringSoon: boolean
+  stale: boolean
+  idleDays: number | null
 }
 
 /** Stock item as staff see it when drafting: no quantities or costs. */
@@ -450,6 +547,8 @@ export interface FinanceTotals {
   /** Cash spent on stock imports (not cost of goods sold). */
   importCost: number
   operatingCost: number
+  /** Cost of confirmed write-offs; already inside `importCost`, not added to `totalCost`. */
+  writeOffLoss: number
   /** Estimated: worked hours x hourly rate. */
   salaryCost: number
   totalCost: number
@@ -470,6 +569,7 @@ export interface FinanceDay {
   revenue: number
   importCost: number
   operatingCost: number
+  writeOffLoss: number
   salaryCost: number
 }
 

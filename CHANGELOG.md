@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.5.0...ibb_sms-v1.6.0) (2026-10-21)
+
+
+### Features
+
+* add item order ([bd81c8f](https://github.com/iubebe/ibb_sms/commit/bd81c8fe3a746ef1a0b5b3f8899d9b532f7b43f5))
+* add item order ([a221940](https://github.com/iubebe/ibb_sms/commit/a2219400d20452ac54ff0e1175b108c742c3f37b))
+* customer info ([bd81c8f](https://github.com/iubebe/ibb_sms/commit/bd81c8fe3a746ef1a0b5b3f8899d9b532f7b43f5))
+* customer info ([b092c3d](https://github.com/iubebe/ibb_sms/commit/b092c3d67010f920f2b5303fdc4fa2062a203112))
+* customer lookup ([cbc6b7a](https://github.com/iubebe/ibb_sms/commit/cbc6b7ae699a394841e559c053df95351d7ac7c2))
+* cut off control ([bd81c8f](https://github.com/iubebe/ibb_sms/commit/bd81c8fe3a746ef1a0b5b3f8899d9b532f7b43f5))
+* cut off management ([71f7a8a](https://github.com/iubebe/ibb_sms/commit/71f7a8a89ee48e29c621598942552b1dae0d52c8))
+
 ## [1.5.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.4.0...ibb_sms-v1.5.0) (2026-10-19)
 
 

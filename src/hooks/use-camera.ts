@@ -51,14 +51,17 @@ export function useCamera() {
     }
   }, [stop])
 
-  /** Grabs the current frame as a 640px-wide JPEG (not mirrored). */
+  /** Grabs the current frame as a 640px-wide JPEG, mirrored to match the selfie preview. */
   const capture = useCallback((): Promise<Blob | null> => {
     const video = videoRef.current
     if (!video || !video.videoWidth) return Promise.resolve(null)
     const canvas = document.createElement('canvas')
     canvas.width = CAPTURE_WIDTH
     canvas.height = Math.round((video.videoHeight / video.videoWidth) * CAPTURE_WIDTH)
-    canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height)
+    const ctx = canvas.getContext('2d')
+    ctx?.translate(canvas.width, 0)
+    ctx?.scale(-1, 1)
+    ctx?.drawImage(video, 0, 0, canvas.width, canvas.height)
     return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY))
   }, [])
 

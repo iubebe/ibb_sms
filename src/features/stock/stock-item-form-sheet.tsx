@@ -35,16 +35,22 @@ function StockItemForm({ item, onDone }: { item: StockItem | null; onDone: () =>
   const [kind, setKind] = useState<StockItemKind>(item?.kind ?? 'material')
   const [unit, setUnit] = useState(item?.unit ?? '')
   const [threshold, setThreshold] = useState(item && item.lowStockThreshold > 0 ? formatQty(item.lowStockThreshold) : '')
+  const [shelfLife, setShelfLife] = useState(item?.shelfLifeDays ? String(item.shelfLifeDays) : '')
   const [isActive, setIsActive] = useState(item?.isActive ?? true)
 
   const thresholdValue = threshold.trim() === '' ? 0 : parseDecimal(threshold)
   const thresholdError = thresholdValue === null || thresholdValue < 0 ? 'Nhập số từ 0 trở lên.' : null
-  const valid = name.trim() !== '' && unit.trim() !== '' && !thresholdError
+  const shelfLifeValue = shelfLife.trim() === '' ? null : parseDecimal(shelfLife)
+  const shelfLifeError =
+    shelfLife.trim() !== '' && (shelfLifeValue === null || !Number.isInteger(shelfLifeValue) || shelfLifeValue < 1 || shelfLifeValue > 3650)
+      ? 'Nhập số ngày nguyên từ 1 đến 3650.'
+      : null
+  const valid = name.trim() !== '' && unit.trim() !== '' && !thresholdError && !shelfLifeError
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
     if (!valid || thresholdValue === null) return
-    const input = { name: name.trim(), kind, unit: unit.trim(), lowStockThreshold: thresholdValue }
+    const input = { name: name.trim(), kind, unit: unit.trim(), lowStockThreshold: thresholdValue, shelfLifeDays: shelfLifeValue }
     if (item) update.mutate({ id: item.id, input: { ...input, isActive } }, { onSuccess: onDone })
     else create.mutate(input, { onSuccess: onDone })
   }
@@ -119,6 +125,23 @@ function StockItemForm({ item, onDone }: { item: StockItem | null; onDone: () =>
         </div>
       </div>
       {thresholdError && <p className="-mt-2 text-sm text-destructive">{thresholdError}</p>}
+
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="stock-shelf-life">Hạn dùng sau khi nhập (ngày)</Label>
+        <Input
+          id="stock-shelf-life"
+          inputMode="numeric"
+          autoComplete="off"
+          placeholder="Để trống nếu không rõ"
+          className="h-11"
+          value={shelfLife}
+          onChange={(e) => setShelfLife(e.target.value)}
+          aria-invalid={!!shelfLifeError}
+        />
+        <p className={cn('text-sm', shelfLifeError ? 'text-destructive' : 'text-muted-foreground')}>
+          {shelfLifeError ?? 'Dùng để cảnh báo hàng sắp hết hạn ở tab Tồn dư, tính từ lần nhập gần nhất.'}
+        </p>
+      </div>
 
       {item && (
         <div className="flex min-h-11 items-center justify-between gap-3">
