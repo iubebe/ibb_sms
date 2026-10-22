@@ -5,6 +5,7 @@ import type { PaymentMethod, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { formatPrice } from '@/lib/format-price'
+import { isOnlineTableName } from '@/lib/online-order'
 
 export interface ReceiptPayment {
   method: PaymentMethod
@@ -22,6 +23,7 @@ export function Receipt({ order, payment }: { order: StaffOrder; payment?: Recei
   const branch = useBranch().data
   const shopName = branch?.name ?? 'Iubebe'
   const address = branch?.address
+  const isOnline = isOnlineTableName(order.tableName)
   const change = payment?.method === 'cash' && payment.received ? payment.received - order.total : null
 
   return (
@@ -31,9 +33,17 @@ export function Receipt({ order, payment }: { order: StaffOrder; payment?: Recei
       <p className="text-center font-semibold">{payment ? 'HÓA ĐƠN THANH TOÁN' : 'PHIẾU TẠM TÍNH'}</p>
       <hr className="my-2 border-dashed border-black" />
       <div className="flex justify-between">
-        <span>Bàn: {order.tableName ?? '—'}</span>
+        <span>{isOnline ? 'Đơn online' : `Bàn: ${order.tableName ?? '—'}`}</span>
         <span>#{order.id.slice(0, 8).toUpperCase()}</span>
       </div>
+      {isOnline && (
+        <div className="mt-0.5">
+          {order.customerName && <p>Khách: {order.customerName}</p>}
+          {order.customerPhone && <p>SĐT: {order.customerPhone}</p>}
+          {order.customerAddress && <p>Địa chỉ: {order.customerAddress}</p>}
+          {order.deliveryAt && <p className="font-semibold">Giao lúc: {dateTime.format(new Date(order.deliveryAt))}</p>}
+        </div>
+      )}
       <p>Giờ: {dateTime.format(payment?.paidAt ?? new Date(order.createdAt))}</p>
       <hr className="my-2 border-dashed border-black" />
       <ul className="flex flex-col gap-1">

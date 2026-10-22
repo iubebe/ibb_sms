@@ -47,6 +47,8 @@ export interface StaffOrder {
   customerName: string | null
   customerPhone: string | null
   customerAddress: string | null
+  /** ISO timestamp; online orders only. */
+  deliveryAt: string | null
   /** VND */
   total: number
   /** ISO timestamp */
@@ -66,6 +68,8 @@ export interface OrderCustomerInput {
   customerName?: string | null
   customerPhone?: string | null
   customerAddress?: string | null
+  /** ISO timestamp; online orders only. */
+  deliveryAt?: string | null
 }
 
 export interface CreateOrderStaffInput extends OrderCustomerInput {
