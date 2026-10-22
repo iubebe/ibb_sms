@@ -34,6 +34,7 @@ export const API_ROUTES = {
   },
   finance: {
     summary: '/finance/summary',
+    export: '/finance/export',
     expenses: '/finance/expenses',
     expense: (id: string) => `/finance/expenses/${encodeURIComponent(id)}`,
   },
