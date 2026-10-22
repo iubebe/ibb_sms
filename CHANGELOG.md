@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.7.0...ibb_sms-v1.8.0) (2026-10-22)
+
+
+### Features
+
+* order online delivery time ([a836553](https://github.com/iubebe/ibb_sms/commit/a8365539df1e364d830646e11e19ff4207a42492))
+* order online delivery time ([0956abd](https://github.com/iubebe/ibb_sms/commit/0956abd9dba805d8ba095be7e9f7dca7feff6863))
+
 ## [1.7.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.6.1...ibb_sms-v1.7.0) (2026-10-22)
 
 
