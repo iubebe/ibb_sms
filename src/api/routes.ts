@@ -34,6 +34,7 @@ export const API_ROUTES = {
   },
   finance: {
     summary: '/finance/summary',
+    export: '/finance/export',
     expenses: '/finance/expenses',
     expense: (id: string) => `/finance/expenses/${encodeURIComponent(id)}`,
   },
@@ -110,6 +111,14 @@ export const API_ROUTES = {
     approveProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/approve`,
     rejectProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/reject`,
     cancelProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/cancel`,
+  },
+  wifi: {
+    list: '/wifi',
+    create: '/wifi',
+    update: (id: string) => `/wifi/${encodeURIComponent(id)}`,
+    credentials: (id: string) => `/wifi/${encodeURIComponent(id)}/credentials`,
+    image: (id: string) => `/wifi/${encodeURIComponent(id)}/image`,
+    remove: (id: string) => `/wifi/${encodeURIComponent(id)}`,
   },
   paymentQrCodes: {
     list: '/payment-qr-codes',

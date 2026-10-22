@@ -9,6 +9,16 @@ export async function getFinanceSummary(from: string, to: string) {
   return data
 }
 
+/** Excel report (tables and charts) for `[from, to)`. */
+export async function exportFinance(range: { from: string; to: string }) {
+  const { data } = await apiClient.get<Blob>(API_ROUTES.finance.export, {
+    params: range,
+    responseType: 'blob',
+    timeout: 60_000,
+  })
+  return data
+}
+
 export async function getExpenses(from: string, to: string) {
   const { data } = await apiClient.get<Expense[]>(API_ROUTES.finance.expenses, { params: { from, to } })
   return data
@@ -31,6 +41,10 @@ export async function deleteExpense(id: string) {
 /** `from`/`to` are `YYYY-MM-DD`, `[from, to)` in the shop timezone. */
 export function useFinanceSummary(from: string, to: string) {
   return useQuery({ queryKey: queryKeys.finance.summary(from, to), queryFn: () => getFinanceSummary(from, to) })
+}
+
+export function useExportFinance() {
+  return useMutation({ mutationFn: exportFinance })
 }
 
 export function useExpenses(from: string, to: string) {

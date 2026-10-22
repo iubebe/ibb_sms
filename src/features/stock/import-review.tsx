@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { importImageUrl, useConfirmImport, useRejectImport } from '@/api/hooks'
 import type { ImportReceipt } from '@/api/types'
 import { Button } from '@/components/ui/button'
+import { CurrencyInput } from '@/components/currency-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { formatPrice } from '@/lib/format-price'
@@ -91,14 +92,14 @@ export function ImportReview({ receipt }: { receipt: ImportReceipt }) {
                   <Label htmlFor={`rv-cost-${receipt.id}-${index}`} className="text-xs">
                     Đơn giá (₫)
                   </Label>
-                  <Input
+                  <CurrencyInput
                     id={`rv-cost-${receipt.id}-${index}`}
-                    inputMode="decimal"
+                    allowDecimal
                     autoComplete="off"
                     className="h-11"
                     value={edit.unitCost}
                     disabled={busy}
-                    onChange={(e) => patch(index, { unitCost: e.target.value })}
+                    onValueChange={(v) => patch(index, { unitCost: v })}
                   />
                 </div>
               </div>

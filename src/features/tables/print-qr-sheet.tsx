@@ -48,7 +48,7 @@ function PrintQrForm({ onDone }: { onDone: () => void }) {
     <div className="mx-auto flex w-full max-w-lg flex-col gap-4 px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <SheetHeader className="px-0">
         <SheetTitle>In mã QR</SheetTitle>
-        <SheetDescription>Tải file PDF A4 chứa mã QR của tất cả các bàn, theo thứ tự danh sách.</SheetDescription>
+        <SheetDescription>Tải file PDF A4 chứa mã QR của tất cả các bàn, theo thứ tự danh sách. Tên bàn nằm trên mã QR; nếu đã bật một mạng WiFi, mã WiFi nằm bên dưới.</SheetDescription>
       </SheetHeader>
       <div className="flex flex-col gap-2">
         <Label htmlFor="qr-layout">Số mã QR trên mỗi trang</Label>

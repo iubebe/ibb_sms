@@ -13,6 +13,7 @@ import {
   Trash2,
   Users,
   Wallet,
+  Wifi,
   Warehouse,
   type LucideIcon,
 } from "lucide-react";
@@ -82,6 +83,12 @@ export const NAV_ITEMS: NavItem[] = [
     icon: CreditCard,
     roles: ["admin"],
     hiddenInNav: true,
+  },
+  {
+    to: "/wifi",
+    label: "WiFi",
+    icon: Wifi,
+    roles: ["admin"],
   },
   {
     to: "/stock",
