@@ -111,6 +111,14 @@ export const API_ROUTES = {
     rejectProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/reject`,
     cancelProposal: (id: string) => `/staff-schedules/proposals/${encodeURIComponent(id)}/cancel`,
   },
+  wifi: {
+    list: '/wifi',
+    create: '/wifi',
+    update: (id: string) => `/wifi/${encodeURIComponent(id)}`,
+    credentials: (id: string) => `/wifi/${encodeURIComponent(id)}/credentials`,
+    image: (id: string) => `/wifi/${encodeURIComponent(id)}/image`,
+    remove: (id: string) => `/wifi/${encodeURIComponent(id)}`,
+  },
   paymentQrCodes: {
     list: '/payment-qr-codes',
     create: '/payment-qr-codes',

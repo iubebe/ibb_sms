@@ -118,6 +118,19 @@ export interface PaymentQrCode {
   updatedAt: string
 }
 
+export type WifiSecurity = 'WPA' | 'WEP' | 'nopass'
+
+/** The password is never returned: only its QR image (GET /wifi/:id/image, admin). */
+export interface WifiNetwork {
+  id: string
+  ssid: string
+  security: WifiSecurity
+  hidden: boolean
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 /** Result of confirm / cancel / pay on an order. */
 export interface OrderTransition {
   id: string

@@ -16,6 +16,7 @@ import { FinancePage } from '@/features/finance/finance-page'
 import { ImportDraftsPage } from '@/features/stock/import-drafts-page'
 import { OrderHistoryPage } from '@/features/orders/order-history-page'
 import { OrdersPage } from '@/features/orders/orders-page'
+import { WifiPage } from '@/features/wifi/wifi-page'
 import { PaymentQrPage } from '@/features/payment-qr/payment-qr-page'
 import { ProductsPage } from '@/features/products/products-page'
 import { ShopPage } from '@/features/shop/shop-page'
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'products', element: <ProductsPage /> },
           { path: 'payment-qr', element: <PaymentQrPage /> },
+          { path: 'wifi', element: <WifiPage /> },
           { path: 'staff', element: <StaffPage /> },
           { path: 'stock', element: <StockPage /> },
           { path: 'finance', element: <FinancePage /> },
