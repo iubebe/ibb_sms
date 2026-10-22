@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react'
 import { useUpdatePaymentQrCode, paymentQrImageUrl } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentQrCode } from '@/api/types'
+import { ZoomableQrImage } from '@/components/zoomable-qr-image'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
@@ -17,10 +18,9 @@ export function PaymentQrCard({ code, onEdit, onDelete }: PaymentQrCardProps) {
 
   return (
     <div className="flex min-w-0 flex-col gap-3 rounded-lg border p-3">
-      <img
+      <ZoomableQrImage
         src={imageUrl}
         alt={code.label}
-        loading="lazy"
         className="aspect-square w-full max-w-full rounded-md bg-white object-contain p-2"
       />
 

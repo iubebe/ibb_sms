@@ -1,10 +1,11 @@
+import { ZoomableQrImage } from '@/components/zoomable-qr-image'
 import { Banknote, CheckCircle2, Eye, Loader2, Printer, QrCode, TriangleAlert } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { usePayOrder, usePaymentQrCodes } from '@/api/hooks'
 import { paymentQrImageUrl } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentMethod, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/currency-input'
 import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { formatPrice } from '@/lib/format-price'
@@ -131,14 +132,14 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="received">Khách đưa (₫)</Label>
-            <Input
+            <CurrencyInput
               id="received"
               className="min-h-11 text-base"
-              inputMode="numeric"
+              maxDigits={10}
               autoComplete="off"
               placeholder="0"
               value={received}
-              onChange={(e) => setReceived(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              onValueChange={setReceived}
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -171,7 +172,7 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
               <div className="flex flex-col gap-2">
                 {qrCodes.map((qr) => (
                   <div key={qr.id} className="flex flex-col items-center gap-2 rounded-lg border p-3">
-                    <img src={paymentQrImageUrl(qr.id)} alt={qr.label} className="h-48 w-48 object-contain" />
+                    <ZoomableQrImage src={paymentQrImageUrl(qr.id)} alt={qr.label} className="mx-auto h-48 w-48 object-contain" />
                     <p className="text-sm font-medium">{qr.label}</p>
                   </div>
                 ))}

@@ -2,6 +2,7 @@ import { Loader2, Plus, Trash2 } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { useCreateImport, useStockItems, useSuppliers } from '@/api/hooks'
 import { Button } from '@/components/ui/button'
+import { CurrencyInput } from '@/components/currency-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -166,14 +167,14 @@ function ImportForm({ onDone }: { onDone: () => void }) {
                   <Label htmlFor={`cost-${line.key}`} className="text-xs">
                     Đơn giá (₫)
                   </Label>
-                  <Input
+                  <CurrencyInput
                     id={`cost-${line.key}`}
-                    inputMode="decimal"
+                    allowDecimal
                     autoComplete="off"
                     placeholder="0"
                     className="h-11"
                     value={line.unitCost}
-                    onChange={(e) => patch(line.key, { unitCost: e.target.value })}
+                    onValueChange={(v) => patch(line.key, { unitCost: v })}
                   />
                 </div>
               </div>

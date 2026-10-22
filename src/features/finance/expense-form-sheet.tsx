@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { useCreateExpense, useUpdateExpense } from '@/api/hooks'
 import type { Expense, ExpenseCategory } from '@/api/types'
 import { Button } from '@/components/ui/button'
+import { CurrencyInput } from '@/components/currency-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -74,7 +75,7 @@ function ExpenseForm({ expense, defaultDay, onDone }: { expense: Expense | null;
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="expense-amount">Số tiền (₫)</Label>
-        <Input id="expense-amount" inputMode="decimal" autoComplete="off" className="h-11 text-base" value={amount} onChange={(e) => setAmount(e.target.value)} />
+        <CurrencyInput id="expense-amount" allowDecimal autoComplete="off" className="h-11 text-base" value={amount} onValueChange={setAmount} />
       </div>
 
       <div className="flex flex-col gap-2">

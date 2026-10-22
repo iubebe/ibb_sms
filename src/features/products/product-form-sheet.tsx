@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { useCategories, useCreateProduct, useUpdateProduct, useUploadProductImage } from '@/api/hooks'
 import type { Product, ProductInput } from '@/api/types'
 import { Button } from '@/components/ui/button'
+import { CurrencyInput } from '@/components/currency-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -121,14 +122,14 @@ function ProductForm({
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="product-price">Giá (₫)</Label>
-        <Input
+        <CurrencyInput
           id="product-price"
           required
-          inputMode="numeric"
+          maxDigits={9}
           autoComplete="off"
           className="h-11"
           value={price}
-          onChange={(e) => setPrice(e.target.value.replace(/\D/g, '').slice(0, 9))}
+          onValueChange={setPrice}
           aria-invalid={!!priceError}
         />
         <p className={priceError ? 'text-sm text-destructive' : 'text-sm text-muted-foreground'}>
