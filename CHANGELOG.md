@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.8.0...ibb_sms-v1.9.0) (2026-10-23)
+
+
+### Features
+
+* roi and investment ([2c1eba0](https://github.com/iubebe/ibb_sms/commit/2c1eba059c1bcbfdb013d4c9287fdae6192d873d))
+
 ## [1.8.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.7.0...ibb_sms-v1.8.0) (2026-10-22)
 
 
