@@ -1,6 +1,6 @@
-import { Check, Loader2, Minus, Pencil, Plus } from 'lucide-react'
+import { Check, CheckCheck, Loader2, Minus, Pencil, Plus } from 'lucide-react'
 import { useState } from 'react'
-import { useConfirmOrder, useSetServed } from '@/api/hooks'
+import { useConfirmOrder } from '@/api/hooks'
 import type { StaffOrder, StaffOrderItem } from '@/api/types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,6 +9,7 @@ import { formatTime, formatTimeAgo } from '@/lib/format-time'
 import { EditOrderCustomerSheet } from '@/features/customers/edit-order-customer-sheet'
 import { OrderCustomerLine } from '@/features/customers/order-customer-line'
 import { ORDER_STATUS_LABEL } from '@/features/dashboard/order-status'
+import { useServedSync } from './use-served-sync'
 
 interface OrderCardProps {
   order: StaffOrder
@@ -27,7 +28,10 @@ export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout,
   const isPending = order.status === 'pending_confirmation'
   const isConfirmed = order.status === 'confirmed'
   const hasCustomer = !!(order.customerName || order.customerPhone || order.customerAddress)
-  const unserved = order.items.reduce((sum, i) => sum + i.quantity - i.servedQuantity, 0)
+  const { draft, errors, setServed } = useServedSync(order.id)
+  const servedOf = (item: StaffOrderItem) => draft[item.id] ?? item.servedQuantity
+  const unserved = order.items.reduce((sum, i) => sum + i.quantity - servedOf(i), 0)
+  const syncing = Object.keys(draft).length > 0
 
   return (
     <li className="flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground">
@@ -60,13 +64,35 @@ export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout,
 
       <ul className="flex flex-col gap-2">
         {order.items.map((item) => (
-          <OrderLine key={item.id} orderId={order.id} item={item} editable={isConfirmed && canManage} />
+          <OrderLine
+            key={item.id}
+            item={item}
+            served={servedOf(item)}
+            syncing={item.id in draft}
+            error={errors[item.id]}
+            editable={isConfirmed && canManage}
+            onChange={(value) => setServed(item.id, value)}
+          />
         ))}
       </ul>
+
+      {isConfirmed && canManage && unserved > 0 && (
+        <Button
+          variant="outline"
+          className="min-h-11"
+          onClick={() => {
+            for (const item of order.items) if (servedOf(item) < item.quantity) setServed(item.id, item.quantity, true)
+          }}
+        >
+          <CheckCheck />
+          Đã ra hết ({unserved} phần)
+        </Button>
+      )}
 
       <div className="flex items-baseline justify-between border-t pt-3">
         <span className="text-sm text-muted-foreground">
           {isConfirmed && unserved > 0 ? `Còn ${unserved} phần chưa ra` : 'Tổng cộng'}
+          {syncing && <Loader2 className="ml-2 inline size-3 animate-spin" aria-label="Đang lưu" />}
         </span>
         <span className="text-lg font-semibold tabular-nums">{formatPrice(order.total)}</span>
       </div>
@@ -108,19 +134,19 @@ export function OrderCard({ order, canManage, canCheckout, onCancel, onCheckout,
 }
 
 interface OrderLineProps {
-  orderId: string
   item: StaffOrderItem
+  /** Optimistic served count (may be ahead of the server). */
+  served: number
+  /** A change is waiting to be saved or in flight. */
+  syncing: boolean
+  error?: string
   /** Show the − / + stepper for delivered quantity. */
   editable: boolean
+  onChange: (servedQuantity: number) => void
 }
 
-function OrderLine({ orderId, item, editable }: OrderLineProps) {
-  const setServed = useSetServed()
-  const done = item.servedQuantity >= item.quantity
-
-  function step(delta: number) {
-    setServed.mutate({ orderId, itemId: item.id, servedQuantity: item.servedQuantity + delta })
-  }
+function OrderLine({ item, served, syncing, error, editable, onChange }: OrderLineProps) {
+  const done = served >= item.quantity
 
   return (
     <li className="flex flex-col gap-1">
@@ -138,34 +164,37 @@ function OrderLine({ orderId, item, editable }: OrderLineProps) {
               size="icon"
               className="min-h-11 min-w-11"
               aria-label={`Bớt một phần ${item.name} đã ra`}
-              disabled={setServed.isPending || item.servedQuantity <= 0}
-              onClick={() => step(-1)}
+              disabled={served <= 0}
+              onClick={() => onChange(served - 1)}
             >
               <Minus />
             </Button>
-            <span className="min-w-10 text-center text-sm tabular-nums">
-              {item.servedQuantity}/{item.quantity}
+            <span
+              className={`flex min-w-10 items-center justify-center gap-1 text-sm tabular-nums ${syncing ? 'text-muted-foreground' : ''}`}
+            >
+              {served}/{item.quantity}
+              {syncing && <Loader2 className="size-3 animate-spin" aria-label="Đang lưu" />}
             </span>
             <Button
               variant="outline"
               size="icon"
               className="min-h-11 min-w-11"
               aria-label={`Thêm một phần ${item.name} đã ra`}
-              disabled={setServed.isPending || done}
-              onClick={() => step(1)}
+              disabled={done}
+              onClick={() => onChange(served + 1)}
             >
               <Plus />
             </Button>
           </div>
         ) : (
           <span className="text-sm text-muted-foreground tabular-nums">
-            {item.servedQuantity}/{item.quantity}
+            {served}/{item.quantity}
           </span>
         )}
       </div>
-      {setServed.isError && (
+      {error && (
         <p role="alert" className="text-xs text-destructive">
-          {setServed.error.message}
+          Không lưu được, đã hoàn lại: {error}
         </p>
       )}
     </li>
