@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { formatPrice } from '@/lib/format-price'
 import { formatMonth } from '@/lib/format-time'
 import { cn } from '@/lib/utils'
+import { BreakEvenSection } from './break-even-section'
 import { EXPENSE_CATEGORY_LABEL, PAYMENT_METHOD_LABEL, formatShortDay } from './finance-labels'
 
 /** Month figures: revenue, costs (imports, salary, operating) and profit. */
@@ -30,10 +31,10 @@ export function OverviewPanel({ from, to, month }: { from: string; to: string; m
       </div>
     )
   }
-  return <Overview data={summary.data} month={month} />
+  return <Overview data={summary.data} month={month} from={from} to={to} />
 }
 
-function Overview({ data, month }: { data: FinanceSummary; month: string }) {
+function Overview({ data, month, from, to }: { data: FinanceSummary; month: string; from: string; to: string }) {
   const { totals } = data
   const profitable = totals.profit >= 0
   const costRows = [
@@ -71,6 +72,8 @@ function Overview({ data, month }: { data: FinanceSummary; month: string }) {
           {data.staffWithoutRate} nhân viên đã làm việc nhưng chưa có lương theo giờ, nên lương đang bị tính thiếu. Đặt ở Nhân sự → Sửa tài khoản.
         </p>
       )}
+
+      <BreakEvenSection from={from} to={to} />
 
       <Section title="Chi phí theo nhóm">
         <ul className="flex flex-col gap-3">

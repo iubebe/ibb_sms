@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { Expense, ExpenseInput, FinanceSummary, Investment, InvestmentInput, RoiSummary } from '@/api/types'
+import type { BreakEven, Expense, ExpenseInput, FinanceSummary, Investment, InvestmentInput, RoiSummary } from '@/api/types'
 
 export async function getFinanceSummary(from: string, to: string) {
   const { data } = await apiClient.get<FinanceSummary>(API_ROUTES.finance.summary, { params: { from, to } })
@@ -124,4 +124,14 @@ export function useUpdateInvestment() {
 export function useDeleteInvestment() {
   const invalidate = useInvalidateFinance()
   return useMutation({ mutationFn: deleteInvestment, onSuccess: invalidate })
+}
+
+export async function getBreakEven(from: string, to: string) {
+  const { data } = await apiClient.get<BreakEven>(API_ROUTES.finance.breakEven, { params: { from, to } })
+  return data
+}
+
+/** Break-even and suggested KPIs of `[from, to)`. */
+export function useBreakEven(from: string, to: string) {
+  return useQuery({ queryKey: queryKeys.finance.breakEven(from, to), queryFn: () => getBreakEven(from, to) })
 }

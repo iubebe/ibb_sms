@@ -595,6 +595,34 @@ export interface RoiSummary {
   items: (Investment & { sharePercent: number })[]
 }
 
+/** Operating break-even and suggested KPI targets of `[from, to)`; `null` = cannot be computed. */
+export interface BreakEven {
+  from: string
+  to: string
+  days: number
+  fixedCost: number
+  variableCostRatio: number | null
+  contributionMarginRatio: number | null
+  avgOrderValue: number | null
+  breakEvenRevenue: number | null
+  breakEvenRevenuePerDay: number | null
+  breakEvenOrdersPerDay: number | null
+  revenue: number
+  paidOrders: number
+  profit: number
+  breakEvenProgressPercent: number | null
+  kpi: {
+    targetProfit: number
+    paybackTargetMonths: number
+    totalInvested: number
+    targetRevenue: number | null
+    targetRevenuePerDay: number | null
+    targetOrders: number | null
+    targetOrdersPerDay: number | null
+    maxImportCost: number | null
+  }
+}
+
 export interface FinanceTotals {
   revenue: number
   paidOrders: number

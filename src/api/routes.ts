@@ -38,6 +38,7 @@ export const API_ROUTES = {
     expenses: '/finance/expenses',
     expense: (id: string) => `/finance/expenses/${encodeURIComponent(id)}`,
     roi: '/finance/roi',
+    breakEven: '/finance/break-even',
     investments: '/finance/investments',
     investment: (id: string) => `/finance/investments/${encodeURIComponent(id)}`,
   },
