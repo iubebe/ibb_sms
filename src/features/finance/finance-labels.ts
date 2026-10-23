@@ -1,4 +1,4 @@
-import type { ExpenseCategory, PaymentMethod } from '@/api/types'
+import type { ExpenseCategory, InvestmentCategory, PaymentMethod } from '@/api/types'
 
 export const EXPENSE_CATEGORY_LABEL: Record<ExpenseCategory, string> = {
   rent: 'Mặt bằng',
@@ -12,6 +12,17 @@ export const EXPENSE_CATEGORY_LABEL: Record<ExpenseCategory, string> = {
 }
 
 export const EXPENSE_CATEGORY_OPTIONS = Object.keys(EXPENSE_CATEGORY_LABEL) as ExpenseCategory[]
+
+export const INVESTMENT_CATEGORY_LABEL: Record<InvestmentCategory, string> = {
+  renovation: 'Thi công, cải tạo',
+  equipment: 'Máy móc, thiết bị',
+  furniture: 'Bàn ghế, nội thất',
+  technology: 'Công nghệ, phần mềm',
+  deposit: 'Đặt cọc',
+  other: 'Khác',
+}
+
+export const INVESTMENT_CATEGORY_OPTIONS = Object.keys(INVESTMENT_CATEGORY_LABEL) as InvestmentCategory[]
 
 export const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
   cash: 'Tiền mặt',

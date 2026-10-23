@@ -558,6 +558,43 @@ export interface ExpenseInput {
   note: string
 }
 
+export type InvestmentCategory = 'renovation' | 'equipment' | 'furniture' | 'technology' | 'deposit' | 'other'
+
+export interface Investment {
+  id: string
+  name: string
+  category: InvestmentCategory
+  amount: number
+  /** `YYYY-MM-DD` */
+  investedOn: string
+  note: string | null
+  createdByName: string | null
+  createdAt: string
+}
+
+export interface InvestmentInput {
+  name: string
+  category: InvestmentCategory
+  amount: number
+  investedOn: string
+  note: string
+}
+
+/** Shop profit of `[from, to)` over the capital invested before `to`; profit is not split per item. */
+export interface RoiSummary {
+  from: string
+  to: string
+  totalInvested: number
+  investedInRange: number
+  profit: number
+  /** `null` when nothing is invested. */
+  roiPercent: number | null
+  /** `null` when profit is not positive. */
+  paybackMonths: number | null
+  byCategory: { category: InvestmentCategory; amount: number }[]
+  items: (Investment & { sharePercent: number })[]
+}
+
 export interface FinanceTotals {
   revenue: number
   paidOrders: number
