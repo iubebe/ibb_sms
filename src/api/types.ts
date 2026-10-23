@@ -77,6 +77,35 @@ export interface CreateOrderStaffInput extends OrderCustomerInput {
   items: CreateOrderItemInput[]
 }
 
+/** `ibb_shop_backend/src/modules/orders/backdated` (admin only): finished, paid orders for a past day. */
+export interface BackdatedOrdersInput {
+  /** Shop day, `YYYY-MM-DD` */
+  date: string
+  paymentMethod: PaymentMethod
+  orders: {
+    tableId: string
+    /** `HH:mm`; defaults to 12:00 on the backend */
+    time?: string
+    items: CreateOrderItemInput[]
+  }[]
+}
+
+export interface BackdatedOrdersResult {
+  created: number
+  orders: { id: string; tableName: string; orderedAt: string; itemCount: number; total: number }[]
+}
+
+/** `ibb_shop_backend/src/modules/orders/order-import`: `errors` comes with a 400 and nothing is imported. */
+export interface OrderImportResult {
+  created: number
+  orders: { id: string; orderKey: string; tableName: string; itemCount: number; total: number; orderedAt: string | null }[]
+}
+
+export interface OrderImportRowError {
+  row: number
+  message: string
+}
+
 /** `ibb_shop_backend/src/modules/customers` (admin only). Created by orders, not by hand. */
 export interface Customer {
   id: string
@@ -593,6 +622,34 @@ export interface RoiSummary {
   paybackMonths: number | null
   byCategory: { category: InvestmentCategory; amount: number }[]
   items: (Investment & { sharePercent: number })[]
+}
+
+/** Operating break-even and suggested KPI targets of `[from, to)`; `null` = cannot be computed. */
+export interface BreakEven {
+  from: string
+  to: string
+  days: number
+  fixedCost: number
+  variableCostRatio: number | null
+  contributionMarginRatio: number | null
+  avgOrderValue: number | null
+  breakEvenRevenue: number | null
+  breakEvenRevenuePerDay: number | null
+  breakEvenOrdersPerDay: number | null
+  revenue: number
+  paidOrders: number
+  profit: number
+  breakEvenProgressPercent: number | null
+  kpi: {
+    targetProfit: number
+    paybackTargetMonths: number
+    totalInvested: number
+    targetRevenue: number | null
+    targetRevenuePerDay: number | null
+    targetOrders: number | null
+    targetOrdersPerDay: number | null
+    maxImportCost: number | null
+  }
 }
 
 export interface FinanceTotals {

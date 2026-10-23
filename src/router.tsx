@@ -11,6 +11,7 @@ import { CheckInPage } from '@/features/check-in/check-in-page'
 import { CustomersPage } from '@/features/customers/customers-page'
 import { DashboardPage } from '@/features/dashboard/dashboard-page'
 import { PageNotFound } from '@/features/errors/page-not-found'
+import { BackdatedOrdersPage } from '@/features/orders/backdated-orders-page'
 import { CreateOrderPage } from '@/features/orders/create-order-page'
 import { FinancePage } from '@/features/finance/finance-page'
 import { ImportDraftsPage } from '@/features/stock/import-drafts-page'
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
         element: <RoleRoute roles={['admin']} />,
         children: [
           { path: 'products', element: <ProductsPage /> },
+          { path: 'orders/backdated', element: <BackdatedOrdersPage /> },
           { path: 'payment-qr', element: <PaymentQrPage /> },
           { path: 'wifi', element: <WifiPage /> },
           { path: 'staff', element: <StaffPage /> },

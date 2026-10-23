@@ -16,7 +16,7 @@ export function ZoomableQrImage({ src, alt, className }: ZoomableQrImageProps) {
           <img src={src} alt={alt} loading="lazy" className={className} />
         </button>
       </DialogTrigger>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-xl p-4">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-xl">
         <DialogTitle className="pr-6">{alt}</DialogTitle>
         <DialogDescription className="sr-only">Mã QR phóng to</DialogDescription>
         <img src={src} alt={alt} className={cn('mx-auto aspect-square w-full rounded-md bg-white object-contain p-2')} />
