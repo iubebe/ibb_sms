@@ -7,6 +7,7 @@ import { downloadBlob } from '@/lib/download-blob'
 import { formatMonth, monthOf, shiftMonth } from '@/lib/format-time'
 import { ExpensesPanel } from './expenses-panel'
 import { monthRange } from './finance-labels'
+import { InvestmentsPanel } from './investments-panel'
 import { OverviewPanel } from './overview-panel'
 
 /** Admin only (see `RoleRoute` in `src/router.tsx`): money figures are not for staff. */
@@ -61,12 +62,18 @@ export function FinancePage() {
           <TabsTrigger value="expenses" className="min-h-5 flex-1 md:px-6">
             Chi phí vận hành
           </TabsTrigger>
+          <TabsTrigger value="investments" className="min-h-5 flex-1 md:px-6">
+            Đầu tư & ROI
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="pt-3">
           <OverviewPanel from={from} to={to} month={month} />
         </TabsContent>
         <TabsContent value="expenses" className="pt-3">
           <ExpensesPanel from={from} to={to} month={month} />
+        </TabsContent>
+        <TabsContent value="investments" className="pt-3">
+          <InvestmentsPanel from={from} to={to} month={month} />
         </TabsContent>
       </Tabs>
     </section>
