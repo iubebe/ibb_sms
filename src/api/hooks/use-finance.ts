@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { Expense, ExpenseInput, FinanceSummary } from '@/api/types'
+import type { Expense, ExpenseInput, FinanceSummary, Investment, InvestmentInput, RoiSummary } from '@/api/types'
 
 export async function getFinanceSummary(from: string, to: string) {
   const { data } = await apiClient.get<FinanceSummary>(API_ROUTES.finance.summary, { params: { from, to } })
@@ -73,4 +73,55 @@ export function useUpdateExpense() {
 export function useDeleteExpense() {
   const invalidate = useInvalidateFinance()
   return useMutation({ mutationFn: deleteExpense, onSuccess: invalidate })
+}
+
+export async function getRoi(from: string, to: string) {
+  const { data } = await apiClient.get<RoiSummary>(API_ROUTES.finance.roi, { params: { from, to } })
+  return data
+}
+
+export async function getInvestments() {
+  const { data } = await apiClient.get<Investment[]>(API_ROUTES.finance.investments)
+  return data
+}
+
+export async function createInvestment(input: InvestmentInput) {
+  const { data } = await apiClient.post<Investment>(API_ROUTES.finance.investments, input)
+  return data
+}
+
+export async function updateInvestment(id: string, input: Partial<InvestmentInput>) {
+  const { data } = await apiClient.patch<Investment>(API_ROUTES.finance.investment(id), input)
+  return data
+}
+
+export async function deleteInvestment(id: string) {
+  await apiClient.delete(API_ROUTES.finance.investment(id))
+}
+
+/** ROI of `[from, to)` over the capital invested before `to`. */
+export function useRoi(from: string, to: string) {
+  return useQuery({ queryKey: queryKeys.finance.roi(from, to), queryFn: () => getRoi(from, to) })
+}
+
+export function useInvestments() {
+  return useQuery({ queryKey: queryKeys.finance.investments, queryFn: getInvestments })
+}
+
+export function useCreateInvestment() {
+  const invalidate = useInvalidateFinance()
+  return useMutation({ mutationFn: createInvestment, onSuccess: invalidate })
+}
+
+export function useUpdateInvestment() {
+  const invalidate = useInvalidateFinance()
+  return useMutation({
+    mutationFn: (v: { id: string; input: Partial<InvestmentInput> }) => updateInvestment(v.id, v.input),
+    onSuccess: invalidate,
+  })
+}
+
+export function useDeleteInvestment() {
+  const invalidate = useInvalidateFinance()
+  return useMutation({ mutationFn: deleteInvestment, onSuccess: invalidate })
 }

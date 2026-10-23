@@ -32,6 +32,8 @@ export const queryKeys = {
     all: ['finance'] as const,
     summary: (from: string, to: string) => ['finance', 'summary', from, to] as const,
     expenses: (from: string, to: string) => ['finance', 'expenses', from, to] as const,
+    roi: (from: string, to: string) => ['finance', 'roi', from, to] as const,
+    investments: ['finance', 'investments'] as const,
   },
   stock: {
     items: ['stock', 'items'] as const,
