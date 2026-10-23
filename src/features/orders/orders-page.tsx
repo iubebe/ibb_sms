@@ -1,4 +1,4 @@
-import { History, Plus } from "lucide-react";
+import { FilePlus2, History, Plus } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useMe, useOrders } from "@/api/hooks";
@@ -28,6 +28,7 @@ export function OrdersPage() {
   const location = useLocation();
   const { data: me } = useMe();
   const role = me?.role;
+  const isAdmin = role === "admin";
   const canManage = role === "admin" || role === "staff";
   const canCheckout =
     role === "admin" || role === "staff" || role === "cashier";
@@ -77,6 +78,16 @@ export function OrdersPage() {
             >
               <History />
               Lịch sử
+            </Button>
+          )}
+          {isAdmin && (
+            <Button
+              variant="outline"
+              className="min-h-9"
+              onClick={() => navigate("/orders/backdated")}
+            >
+              <FilePlus2 />
+              Đơn cũ
             </Button>
           )}
           {canCreateOrder && (

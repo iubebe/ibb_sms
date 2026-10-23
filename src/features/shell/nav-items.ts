@@ -65,6 +65,13 @@ export const NAV_ITEMS: NavItem[] = [
     hiddenInNav: true,
   },
   {
+    to: "/orders/backdated",
+    label: "Nhập đơn cũ",
+    icon: History,
+    roles: ["admin"],
+    hiddenInNav: true,
+  },
+  {
     to: "/tables",
     label: "Bàn",
     icon: QrCode,

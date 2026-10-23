@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { AddOrderItemsInput, CreateOrderStaffInput, OrderCustomerInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
+import type { AddOrderItemsInput, BackdatedOrdersInput, BackdatedOrdersResult, OrderImportResult, CreateOrderStaffInput, OrderCustomerInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
 
 export async function getOrders(status?: OrderStatus) {
   const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.list, { params: { status } })
@@ -17,6 +17,30 @@ export async function getOrderHistory(from: string, to: string) {
 
 export async function createOrderForStaff(input: CreateOrderStaffInput) {
   const { data } = await apiClient.post<StaffOrder>(API_ROUTES.orders.create, input)
+  return data
+}
+
+export async function createBackdatedOrders(input: BackdatedOrdersInput) {
+  const { data } = await apiClient.post<BackdatedOrdersResult>(API_ROUTES.orders.backdated, input)
+  return data
+}
+
+export async function getOrderImportTemplate() {
+  const { data } = await apiClient.get<Blob>(API_ROUTES.orders.importTemplate, {
+    responseType: 'blob',
+    timeout: 60_000,
+  })
+  return data
+}
+
+/** Multipart `file` (.xlsx). All or nothing: a 400 carries `errors` with the row numbers. */
+export async function importOrders(file: File) {
+  const body = new FormData()
+  body.append('file', file)
+  const { data } = await apiClient.post<OrderImportResult>(API_ROUTES.orders.import, body, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 60_000,
+  })
   return data
 }
 
@@ -135,6 +159,20 @@ export function useCreateOrder() {
     onSettled: () =>
       Promise.all([refresh(), queryClient.invalidateQueries({ queryKey: queryKeys.customers.all })]),
   })
+}
+
+export function useCreateBackdatedOrders() {
+  const refresh = useRefreshAfterOrderChange()
+  return useMutation({ mutationFn: createBackdatedOrders, onSettled: refresh })
+}
+
+export function useOrderImportTemplate() {
+  return useMutation({ mutationFn: getOrderImportTemplate })
+}
+
+export function useImportOrders() {
+  const refresh = useRefreshAfterOrderChange()
+  return useMutation({ mutationFn: importOrders, onSettled: refresh })
 }
 
 export function usePaymentQrCodes() {

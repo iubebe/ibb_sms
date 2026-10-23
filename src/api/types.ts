@@ -77,6 +77,35 @@ export interface CreateOrderStaffInput extends OrderCustomerInput {
   items: CreateOrderItemInput[]
 }
 
+/** `ibb_shop_backend/src/modules/orders/backdated` (admin only): finished, paid orders for a past day. */
+export interface BackdatedOrdersInput {
+  /** Shop day, `YYYY-MM-DD` */
+  date: string
+  paymentMethod: PaymentMethod
+  orders: {
+    tableId: string
+    /** `HH:mm`; defaults to 12:00 on the backend */
+    time?: string
+    items: CreateOrderItemInput[]
+  }[]
+}
+
+export interface BackdatedOrdersResult {
+  created: number
+  orders: { id: string; tableName: string; orderedAt: string; itemCount: number; total: number }[]
+}
+
+/** `ibb_shop_backend/src/modules/orders/order-import`: `errors` comes with a 400 and nothing is imported. */
+export interface OrderImportResult {
+  created: number
+  orders: { id: string; orderKey: string; tableName: string; itemCount: number; total: number; orderedAt: string | null }[]
+}
+
+export interface OrderImportRowError {
+  row: number
+  message: string
+}
+
 /** `ibb_shop_backend/src/modules/customers` (admin only). Created by orders, not by hand. */
 export interface Customer {
   id: string
