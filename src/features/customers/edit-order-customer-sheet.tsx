@@ -3,7 +3,10 @@ import { useState, type FormEvent } from 'react'
 import { useUpdateOrderCustomer } from '@/api/hooks'
 import type { StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { fromDatetimeLocal, isOnlineTableName, toDatetimeLocal } from '@/lib/online-order'
 import { CustomerFields } from './customer-fields'
 import { isValidPhone, toNullable, type CustomerFormValues } from './customer-form-values'
 
@@ -32,6 +35,9 @@ function EditForm({ order, onDone }: { order: StaffOrder; onDone: () => void }) 
     address: order.customerAddress ?? '',
   })
 
+  const [deliveryAt, setDeliveryAt] = useState(toDatetimeLocal(order.deliveryAt))
+  const online = isOnlineTableName(order.tableName)
+
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
     update.mutate(
@@ -41,6 +47,7 @@ function EditForm({ order, onDone }: { order: StaffOrder; onDone: () => void }) 
           customerName: toNullable(values.name),
           customerPhone: toNullable(values.phone),
           customerAddress: toNullable(values.address),
+          ...(online && { deliveryAt: fromDatetimeLocal(deliveryAt) }),
         },
       },
       { onSuccess: onDone },
@@ -58,6 +65,18 @@ function EditForm({ order, onDone }: { order: StaffOrder; onDone: () => void }) 
         <SheetDescription>Chỉ sửa được khi đơn chưa thanh toán.</SheetDescription>
       </SheetHeader>
       <CustomerFields idPrefix="edit-order" values={values} onChange={setValues} />
+      {online && (
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="edit-order-delivery">Giờ giao hàng</Label>
+          <Input
+            id="edit-order-delivery"
+            type="datetime-local"
+            className="h-11"
+            value={deliveryAt}
+            onChange={(e) => setDeliveryAt(e.target.value)}
+          />
+        </div>
+      )}
       {update.isError && (
         <p role="alert" className="text-sm text-destructive">
           {update.error.message}

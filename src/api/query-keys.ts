@@ -25,6 +25,9 @@ export const queryKeys = {
   paymentQrCodes: {
     all: ['paymentQrCodes'] as const,
   },
+  wifi: {
+    all: ['wifi'] as const,
+  },
   finance: {
     all: ['finance'] as const,
     summary: (from: string, to: string) => ['finance', 'summary', from, to] as const,

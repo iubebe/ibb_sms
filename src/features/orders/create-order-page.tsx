@@ -6,6 +6,9 @@ import { useTables } from "@/api/hooks/use-tables";
 import { useProducts } from "@/api/hooks/use-products";
 import type { CreateOrderItemInput, DiningTable, Product } from "@/api/types";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { fromDatetimeLocal, isOnlineTableName } from "@/lib/online-order";
 import { CustomerFields } from "@/features/customers/customer-fields";
 import {
   EMPTY_CUSTOMER,
@@ -41,6 +44,7 @@ export function CreateOrderPage() {
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [customer, setCustomer] = useState<CustomerFormValues>(EMPTY_CUSTOMER);
+  const [deliveryAt, setDeliveryAt] = useState("");
 
   // Fast path: default to the "Online" table so staff can start adding items at once.
   const defaultTable = tables.data?.find(
@@ -117,6 +121,9 @@ export function CreateOrderPage() {
       customerName: customer.name.trim() || undefined,
       customerPhone: customer.phone.trim() || undefined,
       customerAddress: customer.address.trim() || undefined,
+      deliveryAt: isOnlineTableName(selectedTable.name)
+        ? (fromDatetimeLocal(deliveryAt) ?? undefined)
+        : undefined,
       items: orderItems.map(
         (item): CreateOrderItemInput => ({
           productId: item.product.id,
@@ -388,6 +395,18 @@ export function CreateOrderPage() {
                       </Button>
                     }
                   />
+                  {isOnlineTableName(selectedTable.name) && (
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="create-order-delivery">Giờ giao hàng</Label>
+                      <Input
+                        id="create-order-delivery"
+                        type="datetime-local"
+                        className="h-11"
+                        value={deliveryAt}
+                        onChange={(e) => setDeliveryAt(e.target.value)}
+                      />
+                    </div>
+                  )}
                   {lookup.isSuccess && (
                     <p className="text-xs text-muted-foreground">
                       {lookup.data

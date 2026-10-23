@@ -1,7 +1,7 @@
 {
   "name": "ibb_sms",
   "private": true,
-  "version": "1.6.1",
+  "version": "1.8.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "volta": {
-    "node": "24.21.0"
+    "node": "24.22.1"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

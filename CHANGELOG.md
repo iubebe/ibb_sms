@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.8.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.7.0...ibb_sms-v1.8.0) (2026-10-22)
+
+
+### Features
+
+* order online delivery time ([a836553](https://github.com/iubebe/ibb_sms/commit/a8365539df1e364d830646e11e19ff4207a42492))
+* order online delivery time ([0956abd](https://github.com/iubebe/ibb_sms/commit/0956abd9dba805d8ba095be7e9f7dca7feff6863))
+
+## [1.7.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.6.1...ibb_sms-v1.7.0) (2026-10-22)
+
+
+### Features
+
+* finance report ([f2128df](https://github.com/iubebe/ibb_sms/commit/f2128df625decd1639b0dfccc117f15c7ea32f79))
+* wifi management ([0e2c66f](https://github.com/iubebe/ibb_sms/commit/0e2c66f26704ac66d4ac77ab5eb1fb74da54ca43))
+
+
+### Bug Fixes
+
+* security cva ([8d20c78](https://github.com/iubebe/ibb_sms/commit/8d20c7804c7a1d3e7bff90a3e136cff4e94c11c0))
+
 ## [1.6.1](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.6.0...ibb_sms-v1.6.1) (2026-10-21)
 
 

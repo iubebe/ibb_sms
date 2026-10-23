@@ -1,7 +1,9 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { useExportFinance } from '@/api/hooks'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { downloadBlob } from '@/lib/download-blob'
 import { formatMonth, monthOf, shiftMonth } from '@/lib/format-time'
 import { ExpensesPanel } from './expenses-panel'
 import { monthRange } from './finance-labels'
@@ -12,6 +14,11 @@ export function FinancePage() {
   const [currentMonth] = useState(() => monthOf(new Date()))
   const [month, setMonth] = useState(currentMonth)
   const { from, to } = monthRange(month, shiftMonth(month, 1))
+  const exporter = useExportFinance()
+
+  function handleExport() {
+    exporter.mutate({ from, to }, { onSuccess: (blob) => downloadBlob(blob, `tai-chinh-${month}.xlsx`) })
+  }
 
   return (
     <section className="flex flex-col gap-4">
@@ -35,7 +42,16 @@ export function FinancePage() {
             <ChevronRight />
           </Button>
         </div>
+        <Button variant="outline" className="min-h-11" disabled={exporter.isPending} onClick={handleExport}>
+          {exporter.isPending ? <Loader2 className="animate-spin" /> : <Download />}
+          Xuất Excel
+        </Button>
       </div>
+      {exporter.isError && (
+        <p role="alert" className="text-sm text-destructive">
+          {exporter.error.message}
+        </p>
+      )}
 
       <Tabs defaultValue="overview">
         <TabsList className="w-full md:w-fit">

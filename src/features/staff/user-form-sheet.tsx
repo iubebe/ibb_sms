@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { useCreateUser, useMe, useUpdateUser } from '@/api/hooks'
 import type { ManagedUser, UserRole } from '@/api/types'
 import { Button } from '@/components/ui/button'
+import { CurrencyInput } from '@/components/currency-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -114,14 +115,14 @@ function UserForm({ user, onDone }: { user: ManagedUser | null; onDone: () => vo
       {user && role !== 'admin' && (
         <div className="flex flex-col gap-2">
           <Label htmlFor="user-rate">Lương theo giờ (₫)</Label>
-          <Input
+          <CurrencyInput
             id="user-rate"
-            inputMode="decimal"
+            allowDecimal
             autoComplete="off"
             placeholder="Ví dụ 25000"
             className="h-11 text-base"
             value={hourlyRate}
-            onChange={(e) => setHourlyRate(e.target.value)}
+            onValueChange={setHourlyRate}
             aria-invalid={!rateValid}
           />
           <p className="text-xs text-muted-foreground">Dùng để ước tính tiền lương ở mục Tài chính. Để trống nếu chưa đặt.</p>

@@ -47,6 +47,8 @@ export interface StaffOrder {
   customerName: string | null
   customerPhone: string | null
   customerAddress: string | null
+  /** ISO timestamp; online orders only. */
+  deliveryAt: string | null
   /** VND */
   total: number
   /** ISO timestamp */
@@ -66,6 +68,8 @@ export interface OrderCustomerInput {
   customerName?: string | null
   customerPhone?: string | null
   customerAddress?: string | null
+  /** ISO timestamp; online orders only. */
+  deliveryAt?: string | null
 }
 
 export interface CreateOrderStaffInput extends OrderCustomerInput {
@@ -113,6 +117,19 @@ export interface PaymentQrCode {
   label: string
   /** S3 key of the image (private, fetched via GET /payment-qr-codes/:id/image). Named `imagePath` for API compatibility. */
   imagePath: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type WifiSecurity = 'WPA' | 'WEP' | 'nopass'
+
+/** The password is never returned: only its QR image (GET /wifi/:id/image, admin). */
+export interface WifiNetwork {
+  id: string
+  ssid: string
+  security: WifiSecurity
+  hidden: boolean
   isActive: boolean
   createdAt: string
   updatedAt: string
