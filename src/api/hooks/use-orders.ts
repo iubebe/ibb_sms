@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { AddOrderItemsInput, BackdatedOrdersInput, BackdatedOrdersResult, OrderImportResult, CreateOrderStaffInput, OrderCustomerInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
+import type { AddOrderItemsInput, BackdatedOrdersInput, BackdatedOrdersResult, OrderImportResult, CreateOrderStaffInput, OrderCustomerInput, OrderStatus, OrderTransition, OrderPaymentQr, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
 
 export async function getOrders(status?: OrderStatus) {
   const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.list, { params: { status } })
@@ -173,6 +173,14 @@ export function useOrderImportTemplate() {
 export function useImportOrders() {
   const refresh = useRefreshAfterOrderChange()
   return useMutation({ mutationFn: importOrders, onSettled: refresh })
+}
+
+/** Transfer QRs with this order's total baked in. Refetched when the total changes. */
+export function useOrderPaymentQrs(orderId: string, total: number) {
+  return useQuery({
+    queryKey: queryKeys.orders.paymentQrs(orderId, total),
+    queryFn: () => apiClient.get<OrderPaymentQr[]>(API_ROUTES.orders.paymentQrs(orderId)).then(r => r.data),
+  })
 }
 
 export function usePaymentQrCodes() {

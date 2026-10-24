@@ -146,9 +146,19 @@ export interface PaymentQrCode {
   label: string
   /** S3 key of the image (private, fetched via GET /payment-qr-codes/:id/image). Named `imagePath` for API compatibility. */
   imagePath: string
+  /** VietQR text decoded from the image on upload; null = static image only (no amount can be added). */
+  qrPayload: string | null
   isActive: boolean
   createdAt: string
   updatedAt: string
+}
+
+/** A transfer QR for one order: `dynamicPayload` already carries the order total and note. */
+export interface OrderPaymentQr {
+  id: string
+  label: string
+  dynamicPayload: string | null
+  bank: { bin: string; bankName: string; accountNo: string; accountName: string | null } | null
 }
 
 export type WifiSecurity = 'WPA' | 'WEP' | 'nopass'
