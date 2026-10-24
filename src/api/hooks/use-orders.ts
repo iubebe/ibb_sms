@@ -87,6 +87,18 @@ export function useOrders(status?: OrderStatus) {
   })
 }
 
+/** Order number = first 3-8 hex chars of the order id (the `Số` on the receipt). Any day. */
+export const ORDER_NUMBER_PATTERN = /^[0-9a-f]{3,8}$/i
+
+export function useOrderSearch(code: string) {
+  return useQuery({
+    queryKey: queryKeys.orders.search(code),
+    queryFn: () => apiClient.get<StaffOrder[]>(API_ROUTES.orders.search, { params: { code } }).then(r => r.data),
+    enabled: ORDER_NUMBER_PATTERN.test(code),
+    staleTime: 30_000,
+  })
+}
+
 export function useOrderHistory(from: string, to: string) {
   return useQuery({
     queryKey: queryKeys.orders.history(from, to),

@@ -84,6 +84,7 @@ export const API_ROUTES = {
   orders: {
     list: '/orders',
     history: '/orders/history',
+    search: '/orders/search',
     create: '/orders',
     backdated: '/orders/backdated',
     importTemplate: '/orders/import/template',
