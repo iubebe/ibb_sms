@@ -27,9 +27,14 @@ export function PaymentQrCard({ code, onEdit, onDelete }: PaymentQrCardProps) {
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate font-medium">{code.label}</p>
-          <Badge variant={code.isActive ? 'default' : 'secondary'} className="mt-1">
-            {code.isActive ? 'Đang hiện ở thanh toán' : 'Đang tắt'}
-          </Badge>
+          <div className="mt-1 flex flex-wrap gap-1">
+            <Badge variant={code.isActive ? 'default' : 'secondary'}>
+              {code.isActive ? 'Đang hiện ở thanh toán' : 'Đang tắt'}
+            </Badge>
+            <Badge variant="outline" title={code.qrPayload ? 'Mã in kèm số tiền của từng đơn' : 'Không đọc được VietQR: in ảnh gốc, không có số tiền'}>
+              {code.qrPayload ? 'QR động' : 'QR tĩnh'}
+            </Badge>
+          </div>
         </div>
         <label className="flex min-h-11 min-w-11 items-center justify-center gap-2 text-sm">
           <span className="sr-only">Hiện mã {code.label} khi thanh toán</span>

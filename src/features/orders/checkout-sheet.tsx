@@ -1,7 +1,7 @@
-import { ZoomableQrImage } from '@/components/zoomable-qr-image'
+import { ZoomableQrCode, ZoomableQrImage } from '@/components/zoomable-qr-image'
 import { Banknote, CheckCircle2, Eye, Loader2, Printer, QrCode, TriangleAlert } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { usePayOrder, usePaymentQrCodes } from '@/api/hooks'
+import { useOrderPaymentQrs, usePayOrder } from '@/api/hooks'
 import { paymentQrImageUrl } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentMethod, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
@@ -33,7 +33,7 @@ export function CheckoutSheet({ order, onClose }: CheckoutSheetProps) {
 
 function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void }) {
   const pay = usePayOrder()
-  const { data: qrCodes } = usePaymentQrCodes()
+  const { data: qrCodes } = useOrderPaymentQrs(order.id, order.total)
   const [method, setMethod] = useState<PaymentMethod>('cash')
   const [received, setReceived] = useState('')
   const [isPending, setIsPending] = useState(false)
@@ -172,8 +172,17 @@ function CheckoutForm({ order, onDone }: { order: StaffOrder; onDone: () => void
               <div className="flex flex-col gap-2">
                 {qrCodes.map((qr) => (
                   <div key={qr.id} className="flex flex-col items-center gap-2 rounded-lg border p-3">
-                    <ZoomableQrImage src={paymentQrImageUrl(qr.id)} alt={qr.label} className="mx-auto h-48 w-48 object-contain" />
+                    {qr.dynamicPayload ? (
+                      <ZoomableQrCode value={qr.dynamicPayload} alt={qr.label} className="mx-auto h-48 w-48" />
+                    ) : (
+                      <ZoomableQrImage src={paymentQrImageUrl(qr.id)} alt={qr.label} className="mx-auto h-48 w-48 object-contain" />
+                    )}
                     <p className="text-sm font-medium">{qr.label}</p>
+                    {qr.dynamicPayload && qr.bank && (
+                      <p className="text-center text-xs text-muted-foreground">
+                        {[qr.bank.bankName, qr.bank.accountName, qr.bank.accountNo].filter(Boolean).join(' - ')}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>

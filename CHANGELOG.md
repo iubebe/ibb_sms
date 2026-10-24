@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.10.0...ibb_sms-v1.11.0) (2026-10-24)
+
+
+### Features
+
+* dynamic qr code ([ff60b08](https://github.com/iubebe/ibb_sms/commit/ff60b082ff1a7d44faac1161bcf9f2654e873892))
+* order history search ([a90fe88](https://github.com/iubebe/ibb_sms/commit/a90fe88c93b3ebeb8ae69dc7738a0a41d9f0dfe6))
+
 ## [1.10.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.9.0...ibb_sms-v1.10.0) (2026-10-23)
 
 

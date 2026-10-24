@@ -62,7 +62,10 @@ export const queryKeys = {
     all: ['orders'] as const,
     list: (status?: OrderStatus) => ['orders', 'list', status ?? 'all'] as const,
     history: (from: string, to: string) => ['orders', 'history', from, to] as const,
+    search: (code: string) => ['orders', 'search', code] as const,
     paymentQrCodes: ['orders', 'paymentQrCodes'] as const,
+    /** The total is part of the key: the payload changes when items are added. */
+    paymentQrs: (orderId: string, total: number) => ['orders', 'paymentQrs', orderId, total] as const,
   },
   staffSchedules: {
     all: ['staffSchedules'] as const,
