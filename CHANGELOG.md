@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.10.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.9.0...ibb_sms-v1.10.0) (2026-10-23)
+
+
+### Features
+
+* back date order ([541b94c](https://github.com/iubebe/ibb_sms/commit/541b94c5261f5a7d8fd379ab70b2347a76d227ee))
+* break even and kpi ([bb45fc9](https://github.com/iubebe/ibb_sms/commit/bb45fc9241c956f025f95fa9c8a73d28dc6f1d0c))
+
+
+### Bug Fixes
+
+* optimize serving items and qr code ([995de49](https://github.com/iubebe/ibb_sms/commit/995de49bfd1ac46003ab44f6cc3b950a275f2a6e))
+
 ## [1.9.0](https://github.com/iubebe/ibb_sms/compare/ibb_sms-v1.8.0...ibb_sms-v1.9.0) (2026-10-23)
 
 

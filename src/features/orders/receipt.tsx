@@ -1,6 +1,7 @@
 import { Printer } from 'lucide-react'
 import { createPortal } from 'react-dom'
-import { useBranch } from '@/api/hooks'
+import { useBranch, usePaymentQrCodes } from '@/api/hooks'
+import { paymentQrImageUrl } from '@/api/hooks/use-payment-qr-codes'
 import type { PaymentMethod, StaffOrder } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -21,6 +22,7 @@ const dateTime = new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyl
 /** Thermal-printer friendly bill (80mm). No `payment` = provisional bill, not yet paid. */
 export function Receipt({ order, payment }: { order: StaffOrder; payment?: ReceiptPayment }) {
   const branch = useBranch().data
+  const qrCodes = usePaymentQrCodes().data
   const shopName = branch?.name ?? 'Iubebe'
   const address = branch?.address
   const isOnline = isOnlineTableName(order.tableName)
@@ -84,6 +86,20 @@ export function Receipt({ order, payment }: { order: StaffOrder; payment?: Recei
             </>
           ) : null}
         </div>
+      )}
+      {!payment && qrCodes && qrCodes.length > 0 && (
+        <>
+          <hr className="my-2 border-dashed border-black" />
+          <p className="text-center font-semibold">Quét mã để thanh toán</p>
+          <ul className="mt-1 flex flex-col items-center gap-2">
+            {qrCodes.map((qr) => (
+              <li key={qr.id} className="flex flex-col items-center">
+                <img src={paymentQrImageUrl(qr.id)} alt={qr.label} className="size-40 object-contain" />
+                <p>{qr.label}</p>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
       <hr className="my-2 border-dashed border-black" />
       <p className="text-center">Cảm ơn quý khách!</p>
