@@ -1,11 +1,22 @@
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+} from "lucide-react";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
-import { useMe, useOrderHistory } from "@/api/hooks";
+import {
+  ORDER_NUMBER_PATTERN,
+  useMe,
+  useOrderHistory,
+  useOrderSearch,
+} from "@/api/hooks";
 import type { StaffOrder } from "@/api/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Sheet,
@@ -52,6 +63,10 @@ export function OrderHistoryPage() {
   });
   const [draft, setDraft] = useState<DateRange | undefined>();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const code = query.trim().replace(/^#/, "");
+  const searching = code !== "";
+  const search = useOrderSearch(code);
 
   const from = range.start.toISOString();
   const to = addDays(range.end, 1).toISOString();
@@ -93,7 +108,24 @@ export function OrderHistoryPage() {
     <section className="flex flex-col gap-4">
       <h2 className="text-xl font-semibold">Lịch sử đơn hàng</h2>
 
-      <div className="flex items-center gap-2">
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          type="search"
+          inputMode="text"
+          autoCapitalize="characters"
+          autoComplete="off"
+          placeholder="Tìm theo số đơn (VD: A1B2C3D4)"
+          aria-label="Tìm theo số đơn"
+          className="min-h-11 pl-9 pr-11 uppercase placeholder:normal-case"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+
+      {searching && <SearchResults code={code} search={search} />}
+
+      <div className={searching ? "hidden" : "flex items-center gap-2"}>
         <Button
           variant="outline"
           size="icon"
@@ -153,7 +185,9 @@ export function OrderHistoryPage() {
             <Button
               className="min-h-11"
               disabled={!draft?.from}
-              onClick={() => draft?.from && apply(draft.from, draft.to ?? draft.from)}
+              onClick={() =>
+                draft?.from && apply(draft.from, draft.to ?? draft.from)
+              }
             >
               Áp dụng
             </Button>
@@ -161,43 +195,101 @@ export function OrderHistoryPage() {
         </SheetContent>
       </Sheet>
 
-      <div className={showRevenue ? "grid grid-cols-3 gap-2" : "grid grid-cols-2 gap-2"}>
-        <Stat label="Số đơn" value={String(orders.length)} />
-        {showRevenue && <Stat label="Doanh thu" value={formatPrice(revenue)} />}
-        <Stat label="Đã hủy" value={String(cancelled)} />
-      </div>
-
-      {history.isPending && (
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-        </div>
-      )}
-      {history.isError && (
-        <div role="alert" className="flex flex-col items-start gap-2 text-sm">
-          <p className="text-destructive">{history.error.message}</p>
-          <Button
-            variant="outline"
-            className="min-h-11"
-            onClick={() => void history.refetch()}
+      {!searching && (
+        <>
+          <div
+            className={
+              showRevenue ? "grid grid-cols-3 gap-2" : "grid grid-cols-2 gap-2"
+            }
           >
-            Thử lại
-          </Button>
-        </div>
-      )}
-      {history.data && orders.length === 0 && (
-        <p className="py-8 text-center text-sm text-muted-foreground">
-          Không có đơn hàng nào trong khoảng này.
-        </p>
-      )}
-      {orders.length > 0 && (
-        <ul className="grid gap-3 md:grid-cols-2">
-          {orders.map((order) => (
-            <HistoryCard key={order.id} order={order} showDate={!isSingleDay} />
-          ))}
-        </ul>
+            <Stat label="Số đơn" value={String(orders.length)} />
+            {showRevenue && (
+              <Stat label="Doanh thu" value={formatPrice(revenue)} />
+            )}
+            <Stat label="Đã hủy" value={String(cancelled)} />
+          </div>
+
+          {history.isPending && (
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-28" />
+              <Skeleton className="h-28" />
+            </div>
+          )}
+          {history.isError && (
+            <div
+              role="alert"
+              className="flex flex-col items-start gap-2 text-sm"
+            >
+              <p className="text-destructive">{history.error.message}</p>
+              <Button
+                variant="outline"
+                className="min-h-11"
+                onClick={() => void history.refetch()}
+              >
+                Thử lại
+              </Button>
+            </div>
+          )}
+          {history.data && orders.length === 0 && (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Không có đơn hàng nào trong khoảng này.
+            </p>
+          )}
+          {orders.length > 0 && (
+            <ul className="grid gap-3 md:grid-cols-2">
+              {orders.map((order) => (
+                <HistoryCard
+                  key={order.id}
+                  order={order}
+                  showDate={!isSingleDay}
+                />
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </section>
+  );
+}
+
+type SearchQuery = ReturnType<typeof useOrderSearch>;
+
+/** Orders matching the typed number on any day (the date range is ignored while searching). */
+function SearchResults({
+  code,
+  search,
+}: {
+  code: string;
+  search: SearchQuery;
+}) {
+  if (!ORDER_NUMBER_PATTERN.test(code)) {
+    return (
+      <p className="py-8 text-center text-sm text-muted-foreground">
+        Nhập 3–8 ký tự đầu của số đơn (chữ số và A–F).
+      </p>
+    );
+  }
+  if (search.isPending) return <Skeleton className="h-28" />;
+  if (search.isError) {
+    return (
+      <p role="alert" className="text-sm text-destructive">
+        {search.error.message}
+      </p>
+    );
+  }
+  if (search.data.length === 0) {
+    return (
+      <p className="py-8 text-center text-sm text-muted-foreground">
+        Không tìm thấy đơn nào có số “{code.toUpperCase()}”.
+      </p>
+    );
+  }
+  return (
+    <ul className="grid gap-3 md:grid-cols-2">
+      {search.data.map((order) => (
+        <HistoryCard key={order.id} order={order} showDate />
+      ))}
+    </ul>
   );
 }
 
@@ -210,13 +302,22 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function HistoryCard({ order, showDate }: { order: StaffOrder; showDate: boolean }) {
+function HistoryCard({
+  order,
+  showDate,
+}: {
+  order: StaffOrder;
+  showDate: boolean;
+}) {
   return (
     <li className="flex flex-col gap-2 rounded-xl border bg-card p-4 text-card-foreground">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate font-semibold">
             {order.tableName ?? "Không có bàn"}
+            <span className="ml-2 text-xs font-normal text-muted-foreground">
+              #{order.id.slice(0, 8).toUpperCase()}
+            </span>
           </p>
           <p className="text-xs text-muted-foreground">
             {showDate && `${shortDay.format(new Date(order.createdAt))} · `}
