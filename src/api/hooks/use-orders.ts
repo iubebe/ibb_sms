@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/api/client'
 import { queryKeys } from '@/api/query-keys'
 import { API_ROUTES } from '@/api/routes'
-import type { AddOrderItemsInput, BackdatedOrdersInput, BackdatedOrdersResult, OrderImportResult, CreateOrderStaffInput, OrderCustomerInput, OrderStatus, OrderTransition, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
+import type { AddOrderItemsInput, BackdatedOrdersInput, BackdatedOrdersResult, OrderImportResult, CreateOrderStaffInput, OrderCustomerInput, OrderStatus, OrderTransition, OrderPaymentQr, PaymentMethod, PaymentQrCode, ServedItem, StaffOrder } from '@/api/types'
 
 export async function getOrders(status?: OrderStatus) {
   const { data } = await apiClient.get<StaffOrder[]>(API_ROUTES.orders.list, { params: { status } })
@@ -84,6 +84,18 @@ export function useOrders(status?: OrderStatus) {
     queryFn: () => getOrders(status),
     staleTime: 5_000,
     refetchInterval: 15_000,
+  })
+}
+
+/** Order number = first 3-8 hex chars of the order id (the `Số` on the receipt). Any day. */
+export const ORDER_NUMBER_PATTERN = /^[0-9a-f]{3,8}$/i
+
+export function useOrderSearch(code: string) {
+  return useQuery({
+    queryKey: queryKeys.orders.search(code),
+    queryFn: () => apiClient.get<StaffOrder[]>(API_ROUTES.orders.search, { params: { code } }).then(r => r.data),
+    enabled: ORDER_NUMBER_PATTERN.test(code),
+    staleTime: 30_000,
   })
 }
 
@@ -173,6 +185,14 @@ export function useOrderImportTemplate() {
 export function useImportOrders() {
   const refresh = useRefreshAfterOrderChange()
   return useMutation({ mutationFn: importOrders, onSettled: refresh })
+}
+
+/** Transfer QRs with this order's total baked in. Refetched when the total changes. */
+export function useOrderPaymentQrs(orderId: string, total: number) {
+  return useQuery({
+    queryKey: queryKeys.orders.paymentQrs(orderId, total),
+    queryFn: () => apiClient.get<OrderPaymentQr[]>(API_ROUTES.orders.paymentQrs(orderId)).then(r => r.data),
+  })
 }
 
 export function usePaymentQrCodes() {

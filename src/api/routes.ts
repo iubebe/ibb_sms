@@ -84,6 +84,7 @@ export const API_ROUTES = {
   orders: {
     list: '/orders',
     history: '/orders/history',
+    search: '/orders/search',
     create: '/orders',
     backdated: '/orders/backdated',
     importTemplate: '/orders/import/template',
@@ -96,6 +97,7 @@ export const API_ROUTES = {
     served: (orderId: string, itemId: string) =>
       `/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(itemId)}/served`,
     paymentQrCodes: '/orders/payment-qr-codes',
+    paymentQrs: (orderId: string) => `/orders/${encodeURIComponent(orderId)}/payment-qrs`,
   },
   staffSchedules: {
     list: (weekStartDate: string) => `/staff-schedules?weekStartDate=${encodeURIComponent(weekStartDate)}`,

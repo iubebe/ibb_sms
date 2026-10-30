@@ -1,3 +1,4 @@
+import { QRCodeSVG } from 'qrcode.react'
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
@@ -20,6 +21,24 @@ export function ZoomableQrImage({ src, alt, className }: ZoomableQrImageProps) {
         <DialogTitle className="pr-6">{alt}</DialogTitle>
         <DialogDescription className="sr-only">Mã QR phóng to</DialogDescription>
         <img src={src} alt={alt} className={cn('mx-auto aspect-square w-full rounded-md bg-white object-contain p-2')} />
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+/** Same as ZoomableQrImage, for a QR rendered from text (e.g. a per-order VietQR payload). */
+export function ZoomableQrCode({ value, alt, className }: { value: string; alt: string; className?: string }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button type="button" aria-label={`Phóng to mã ${alt}`} className="w-full cursor-zoom-in">
+          <QRCodeSVG value={value} level="M" marginSize={2} role="img" aria-label={alt} className={cn('bg-white', className)} />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-xl">
+        <DialogTitle className="pr-6">{alt}</DialogTitle>
+        <DialogDescription className="sr-only">Mã QR phóng to</DialogDescription>
+        <QRCodeSVG value={value} level="M" marginSize={2} role="img" aria-label={alt} className="mx-auto aspect-square h-auto w-full rounded-md bg-white" />
       </DialogContent>
     </Dialog>
   )
